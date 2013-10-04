@@ -150,7 +150,7 @@ cliklike.o: cmbtypes.o
 settings.o: ../camb/libcamb_$(RECOMBINATION).a
 cmbtypes.o: settings.o likelihood.o GeneralTypes.o
 Planck_like.o: cmbtypes.o
-cmbdata.o: Planck_like.o coscos_wrapper.o
+cmbdata.o: Planck_like.o coscos_wrapper.o coscos.o
 coscos_wrapper.o: coscos.o
 bbn.o: settings.o likelihood.o
 wigglez.o: cmbtypes.o
@@ -190,7 +190,7 @@ export F90C
 	f77 $(F90FLAGS) -c $<
 
 %.o: %.c
-	$(CC) -I$(GSLINC) -c $*.c $(INCLUDE)
+	$(CC) $(GSLINC) -c $*.c $(INCLUDE)
 
     
 coscos_wrapper.c: coscos_wrapper.pyx
