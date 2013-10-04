@@ -189,7 +189,7 @@ export F90C
 	f77 $(F90FLAGS) -c $<
 
 %.o: %.c
-	$(CC) $(GSLINC) -c $*.c $(INCLUDE)
+	$(CC) -I$(GSLINC) -c $*.c $(INCLUDE)
 
     
 coscos.c: coscos.pyx
