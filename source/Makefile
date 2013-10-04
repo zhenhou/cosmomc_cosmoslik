@@ -2,7 +2,13 @@
 #Intel MPI
 #these settings for ifort 13 and higher
 #Can remove -xHost if your cluster is not uniform, or specify specific processor optimizations -x...
+
+ifeq ($(HOSTNAME),Local)
 F90C     = mpif90 -f90=ifort
+else
+F90C     = mpif90
+endif
+
 FFLAGS = -mkl -openmp -O3 -xHost -no-prec-div -fpp -DMPI
 LAPACKL = -lmpi
 
@@ -184,7 +190,7 @@ export F90C
 	f77 $(F90FLAGS) -c $<
 
 %.o: %.c
-	$(CC) $(GSLINC) -c $*.c $(INCLUDE)
+	$(CC) -I$(GSLINC) -c $*.c $(INCLUDE)
 
     
 coscos_wrapper.c: coscos_wrapper.pyx
