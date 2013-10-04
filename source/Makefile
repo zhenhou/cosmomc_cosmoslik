@@ -105,7 +105,7 @@ LIKEFILES =  DataLikelihoods.o calclike.o
 
 OBJFILES = ObjectLists.o ParamNames.o Matrix_utils.o settings.o samples.o IO.o GeneralTypes.o cmbtypes.o Planck_like.o  \
 	likelihood.o bbn.o $(DATAMODULES) $(CLSFILE) cmbdata.o $(PROPOSE) paramdef.o  $(PARAMETERIZATION) $(LIKEFILES) \
-	EstCovmat.o PowellConstrainedMinimize.o postprocess.o MCMC.o minimize.o driver.o coscos.o
+	EstCovmat.o PowellConstrainedMinimize.o postprocess.o MCMC.o minimize.o driver.o coscos_wrapper.o
 
 
 ifeq ($(EXTDATA),WIGZ)
@@ -144,7 +144,8 @@ cliklike.o: cmbtypes.o
 settings.o: ../camb/libcamb_$(RECOMBINATION).a
 cmbtypes.o: settings.o likelihood.o GeneralTypes.o
 Planck_like.o: cmbtypes.o
-cmbdata.o: Planck_like.o coscos.o
+cmbdata.o: Planck_like.o coscos_wrapper.o
+coscos_wrapper.o: coscos.o
 bbn.o: settings.o likelihood.o
 wigglez.o: cmbtypes.o
 mpk.o: cmbtypes.o
@@ -186,8 +187,8 @@ export F90C
 	$(CC) $(GSLINC) -c $*.c $(INCLUDE)
 
     
-coscos.c: coscos.pyx
-	cython coscos.pyx
+coscos_wrapper.c: coscos_wrapper.pyx
+	cython $?
 
 %.o: %.f90
 	$(F90C) $(F90FLAGS) -c $*.f90

@@ -43,6 +43,7 @@ use MatrixUtils
 use CMBLikes
 use constants
 use likelihood
+use coscos
 implicit none
 
     logical :: Use_clik= .false.
@@ -357,6 +358,7 @@ contains
      write(*,*) 'Initializing cosmoslik parameter file: '// TRIM(aname)
      call init_coscos(1)
      call init_script(aname)
+     print *, "num params: ", get_num_params()
      return
    !! cosmoslik
 
