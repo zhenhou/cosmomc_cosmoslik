@@ -31,7 +31,7 @@ highL ?=
 #highL = ../highL
 
 IFLAG = -I
-INCLUDE = $(IFLAG)$(shell python-config --includes)
+INCLUDE = $(shell python-config --includes)
 
 #clik path and library
 ifeq ($(PLANCKLIKE),cliklike)
@@ -105,7 +105,7 @@ LIKEFILES =  DataLikelihoods.o calclike.o
 
 OBJFILES = ObjectLists.o ParamNames.o Matrix_utils.o settings.o samples.o IO.o GeneralTypes.o cmbtypes.o Planck_like.o  \
 	likelihood.o bbn.o $(DATAMODULES) $(CLSFILE) cmbdata.o $(PROPOSE) paramdef.o  $(PARAMETERIZATION) $(LIKEFILES) \
-	EstCovmat.o PowellConstrainedMinimize.o postprocess.o MCMC.o minimize.o driver.o coscos_.o
+	EstCovmat.o PowellConstrainedMinimize.o postprocess.o MCMC.o minimize.o driver.o coscos.o
 
 
 ifeq ($(EXTDATA),WIGZ)
@@ -144,7 +144,7 @@ cliklike.o: cmbtypes.o
 settings.o: ../camb/libcamb_$(RECOMBINATION).a
 cmbtypes.o: settings.o likelihood.o GeneralTypes.o
 Planck_like.o: cmbtypes.o
-cmbdata.o: Planck_like.o coscos_.o
+cmbdata.o: Planck_like.o coscos.o
 bbn.o: settings.o likelihood.o
 wigglez.o: cmbtypes.o
 mpk.o: cmbtypes.o
@@ -174,7 +174,7 @@ else
 F90FLAGS += -DNOWMAP
 endif
 
-LINKFLAGS += $(shell python-config --libs)
+LINKFLAGS += -L$(shell python-config --prefix)/lib $(shell python-config --libs) 
 
 export FFLAGS
 export F90C
@@ -186,8 +186,8 @@ export F90C
 	$(CC) $(GSLINC) -c $*.c $(INCLUDE)
 
     
-coscos_.c: coscos_.pyx
-	cython coscos_.pyx
+coscos.c: coscos.pyx
+	cython coscos.pyx
 
 %.o: %.f90
 	$(F90C) $(F90FLAGS) -c $*.f90

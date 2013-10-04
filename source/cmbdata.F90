@@ -355,8 +355,7 @@ contains
    !! cosmoslik
    elseif( aname(LEN_TRIM(aname)-1:LEN_TRIM(aname)) == 'py') then
      write(*,*) 'Initializing cosmoslik parameter file: '// TRIM(aname)
-     call init_python
-     call initcoscos
+     call init_coscos(1)
      call init_script(aname)
      return
    !! cosmoslik
