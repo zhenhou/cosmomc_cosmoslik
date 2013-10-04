@@ -16,13 +16,13 @@ module coscos
         end function
         
         
-        function get_param_info(i,paramname,min,max,width,scale)
+        subroutine get_param_info(i,paramname,start,min,max,width,scale)
        
             integer(8) :: i
-            real(8) :: min,max,width,scale
+            real(8) :: start,min,max,width,scale
             character(len=*) :: paramname
        
-        end function
+        end subroutine
        
        
     end interface

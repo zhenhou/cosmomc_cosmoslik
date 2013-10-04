@@ -1,6 +1,7 @@
 import cosmoslik as K
 import traceback
 import sys, os
+from numpy import inf
 
 script = None
 kill_on_error = None
@@ -45,15 +46,13 @@ def print_exception(e):
     """Print a Python exception."""
     traceback.print_exception(*e)
 
-cdef int handle_exception(e):
+cdef void handle_exception(e):
     """Handle exception e given the kill_on_error option."""
     global kill_on_error, last_exception
     last_exception = (type(e), e, sys.exc_info()[2], None, sys.stderr)
     if kill_on_error:
         print_exception(last_exception)
         os._exit(1)
-    else:
-        return -1
 
 
 
@@ -76,4 +75,22 @@ cdef public int get_num_params_():
         global script
         return len(script.get_sampled())
     except Exception as e:
-        return handle_exception(e)
+        handle_exception(e)
+
+cdef public void get_param_info_(int *i, char *paramname, 
+                                 double *start,
+                                 double *min, double *max, 
+                                 double *width, double *scale,
+                                 int nparamname):
+    try:
+        global script
+        name,info = script.get_sampled().items()[i[0]-1]
+        start[0] = info.start
+        min[0] = getattr(info,'min',-inf)
+        max[0] = getattr(info,'max',inf)
+        width[0] = scale[0] = getattr(info,'scale',1)
+        memcpy(paramname,<char*>name,len(name))
+    except Exception as e:
+        handle_exception(e)
+
+
