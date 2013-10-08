@@ -91,6 +91,7 @@ implicit none
     
     !!cosmoslik
     type cosmoslik_params
+        integer     :: num_params
         character(LEN=Ini_max_string_len), pointer, dimension(:) :: pnames
         real(mcp), pointer, dimension(:,:) :: info
     end type
@@ -372,7 +373,8 @@ contains
      call init_script(aname)
      call get_num_params(num_params)
      print *, "num params: ", num_params
-    
+     
+     slik_params%num_params = num_params
      allocate(slik_params%pnames(1:num_params))
      allocate(slik_params%info(1:5,1:num_params))
 
