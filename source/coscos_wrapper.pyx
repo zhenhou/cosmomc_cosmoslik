@@ -3,8 +3,9 @@ import traceback
 import sys, os
 from numpy import inf
 
-script = None
+scripts = None
 kill_on_error = None
+params = None
 
 from libc.stdlib cimport malloc
 from libc.string cimport memcpy
@@ -15,15 +16,6 @@ cdef extern from "Python.h":
 cdef extern void initcoscos_wrapper()
 
 cdef public void init_coscos_(int *_kill_on_error):
-    """
-    Initialize the coscos plugin. This must be called before any other coscos functions are used. 
-
-    Parameters:
-    -----------
-    int *_kill_on_error - 1 to exit the program and print a stack trace on a 
-                          Python error, otherwise 0 to ignore Python errors
-
-    """
     Py_Initialize()
     initcoscos_wrapper()
     global kill_on_error
@@ -57,25 +49,22 @@ cdef void handle_exception(e):
 
 
 cdef public void init_script_(char *name, int nname):
-    """
-    Initialize a CosmoSlik script.
-    """
     try:
-        global script
+        global script, params
         script = K.load_script(str(add_null_term(name,nname)).strip())
+        params = dict()
     except Exception as e:
         handle_exception(e)
 
 
-cdef public int get_num_params_():
-    """
-    Get the number of sampled parameters.
-    """
+cdef public int get_num_params_(int *num_params):
     try:
         global script
-        return len(script.get_sampled())
+        num_params[0] = len(script.get_sampled())
     except Exception as e:
         handle_exception(e)
+
+
 
 cdef public void get_param_info_(int *i, char *paramname, 
                                  double *start,
@@ -92,5 +81,24 @@ cdef public void get_param_info_(int *i, char *paramname,
         memcpy(paramname,<char*>name,len(name))
     except Exception as e:
         handle_exception(e)
+
+
+cdef public void set_param_(int *i, double *val):
+    try:
+        global params, script
+        params[script.get_sampled().keys()[i[0]-1]] = val[0]
+    except Exception as e:
+        handle_exception(e)
+
+
+cdef public void get_lnl_(double* lnl):
+    try:
+        global script, params
+        lnl[0] = script.evaluate(**params)[0]
+    except Exception as e:
+        handle_exception(e)
+
+
+
 
 

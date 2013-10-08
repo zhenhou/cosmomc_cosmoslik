@@ -339,8 +339,8 @@ contains
    real(mcp), pointer, dimension(:) :: tmp_arr
    character(LEN=Ini_max_string_len) :: data_format
    integer file_unit
-   integer(8) :: j
-   real(8) :: start,min,max,width,scale
+   integer :: j, num_params
+   real(8) :: start,min,max,width,scale,lnl
    character(len=1024) :: paramname
    Type(TIniFile) :: Ini
 
@@ -361,13 +361,16 @@ contains
      write(*,*) 'Initializing cosmoslik parameter file: '// TRIM(aname)
      call init_coscos(1)
      call init_script(aname)
-     num_params = get_num_params()
+     call get_num_params(num_params)
      print *, "num params: ", num_params
      do j = 1,num_params
         paramname = ' '
         call get_param_info(j,paramname,start,min,max,width,scale)
         print *, trim(paramname), start, min, max, width, scale
+        call set_param(j,real(3,8))
      end do
+     call get_lnl(lnl)
+     print *, "lnl: ", lnl
      return
    !! cosmoslik
 
