@@ -88,6 +88,14 @@ implicit none
     contains
     procedure :: LogLike => CMBLnLike
     end type CMBDataLikelihood
+    
+    !!cosmoslik
+    type cosmoslik_params
+        character(LEN=Ini_max_string_len), pointer, dimension(:) :: pnames
+    end type
+
+    type(cosmoslik_params) slik_params
+    !!cosmoslik
 
 
   logical :: init_MAP = .true.
@@ -363,10 +371,15 @@ contains
      call init_script(aname)
      call get_num_params(num_params)
      print *, "num params: ", num_params
+    
+     allocate(slik_params%pnames(1:num_params))
+
      do j = 1,num_params
         paramname = ' '
         call get_param_info(j,paramname,start,min,max,width,scale)
-        print *, trim(paramname), start, min, max, width, scale
+        slik_params%pnames(j) = adjustl(paramname)
+
+        print *, trim(slik_params%pnames(j)), start, min, max, width, scale
         call set_param(j,real(3,8))
      end do
      call get_lnl(lnl)
