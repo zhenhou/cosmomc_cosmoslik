@@ -91,7 +91,7 @@ implicit none
     
     !!cosmoslik
     type cosmoslik_params
-        integer     :: num_params
+        integer     :: num_params = 0
         character(LEN=Ini_max_string_len), pointer, dimension(:) :: pnames
         real(mcp), pointer, dimension(:,:) :: info
     end type
