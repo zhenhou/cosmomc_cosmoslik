@@ -211,7 +211,7 @@ clean: cleancosmomc
 	rm -f ../camb/*.o ../camb/*.obj ../camb/*.mod
 
 cleancosmomc:
-	rm -f *.o *.mod *.d *.pc *.obj ../core
+	rm -f *.o *.mod *.d *.pc *.obj ../core coscos_wrapper.c coscos_wrapper.h
 
 
 getdist: camb $(DISTFILES)
