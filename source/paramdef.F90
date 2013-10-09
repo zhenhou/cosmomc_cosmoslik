@@ -252,6 +252,11 @@
     Type(DataLikelihood), pointer :: DataLike
     integer :: oversample_fast= 1
     logical first
+    
+    !!cosmoslik
+    integer :: slik_ct
+    logical :: if_slik = .false.
+    !!cosmoslik
 
     output_lines = 0
 
@@ -296,9 +301,30 @@
 
     GaussPriors%std=0 !no priors by default
     do i=1,num_params
-        InLine =  ParamNames_ReadIniForParam(NameMapping,Ini,'param',i)
-        if (InLine=='') call ParamError('parameter ranges not found',i)
-        read(InLine, *, err = 100, end =100) center, Scales%PMin(i), Scales%PMax(i), Scales%StartWidth(i), Scales%PWidth(i)
+        !!ZH print
+        !print*, trim(NameMapping%name(i))
+        !!ZH print
+        
+        !!cosmoslik
+        if_slik = .false.
+        do slik_ct=1, slik_params%num_params
+            if ((NameMapping%name(i)) .eq. trim(slik_params%pnames(slik_ct))) then
+                if_slik = .true.
+                center = slik_params%info(1,slik_ct)
+                Scales%PMin(i) = slik_params%info(2,slik_ct)
+                Scales%PMax(i) = slik_params%info(3,slik_ct)
+                Scales%StartWidth(i) = slik_params%info(4,slik_ct)
+                Scales%PWidth(i) = slik_params%info(5,slik_ct)
+            endif
+        enddo
+        !!cosmoslik
+        
+        if (.not. if_slik) then !!cosmoslik
+            InLine =  ParamNames_ReadIniForParam(NameMapping,Ini,'param',i)
+            if (InLine=='') call ParamError('parameter ranges not found',i)
+            read(InLine, *, err = 100, end =100) center, Scales%PMin(i), Scales%PMax(i), Scales%StartWidth(i), Scales%PWidth(i)
+        endif !!cosmoslik
+
         if (Scales%PWidth(i)/=0) then
             InLine =  ParamNames_ReadIniForParam(NameMapping,Ini,'prior',i)
             if (InLine/='') read(InLine, *, err = 101, end=101) GaussPriors%mean(i), GaussPriors%std(i)
