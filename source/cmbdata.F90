@@ -389,10 +389,10 @@ contains
         slik_params%info(5,j) = scale
 
         print *, trim(slik_params%pnames(j)), start, min, max, width, scale
-        call set_param(j,real(3,8))
+        !call set_param(j,real(3,8))
      end do
-     call get_lnl(lnl)
-     print *, "lnl: ", lnl
+     !call get_lnl(lnl)
+     !print *, "lnl: ", lnl
      return
    !! cosmoslik
 
@@ -998,7 +998,7 @@ contains
     Class(TheoryPredictions) Theory
     real(mcp) :: DataParams(:)
     real(mcp) cl(lmax,num_cls_tot)
-    real(mcp) CMBLnLike
+    real(mcp) CMBLnLike, slik_lnl
     real(mcp) sznorm, szcl(lmax,num_cls_tot)
 
     call ClsFromTheoryData(Theory, cl)
@@ -1010,6 +1010,11 @@ contains
      end if
      if (like%name == 'WMAP') then
        CMBLnLike = MAPLnLike(szcl)
+     !! cosmoslik !!
+     elseif( aname(LEN_TRIM(aname)-1:LEN_TRIM(aname)) == 'py') then
+       call SlikLnLike(slik_params, cl, slik_lnl)
+       CMBLnLike = slik_lnl
+     !! cosmoslik !!
      else
        CMBLnLike = CalcLnLike(szcl,like%dataset)
      end if

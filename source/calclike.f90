@@ -1,6 +1,7 @@
     module CalcLike
     use cmbtypes
     use DataLikelihoodList
+    use coscos
     implicit none
 
     real(mcp) :: Temperature  = 1
