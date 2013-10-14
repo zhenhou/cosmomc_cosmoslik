@@ -64,7 +64,7 @@ cdef void handle_exception(e):
 
 gscripts = {}
 
-cdef public void init_script_(char *name, ccint *ccid, ccnchar nname):
+cdef public void init_script_(ccint *ccid, char *name, ccnchar nname):
     try:
         global gscripts
         script = K.load_script(str(add_null_term(name,nname)).strip())
@@ -78,7 +78,7 @@ cdef public void init_script_(char *name, ccint *ccid, ccnchar nname):
 cdef public void get_num_params_(ccint *ccid, ccint *num_params):
     try:
         global gscripts
-        num_params[0] = len(gscripts[ccid].get_sampled())
+        num_params[0] = len(gscripts[ccid[0]].get_sampled())
     except Exception as e:
         handle_exception(e)
 
@@ -112,7 +112,7 @@ cdef public void set_param_(ccint *ccid, ccint *i, ccreal *val):
         handle_exception(e)
 
 
-cdef public void get_lnl_(ccreal* lnl):
+cdef public void get_lnl_(ccint *ccid, ccreal* lnl):
     try:
         global gscripts
         script = gscripts[ccid[0]]

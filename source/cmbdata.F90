@@ -350,8 +350,8 @@ contains
    real(mcp), pointer, dimension(:) :: tmp_arr
    character(LEN=Ini_max_string_len) :: data_format
    integer file_unit
-   integer :: j, num_params
-   real(8) :: start,min,max,width,scale,lnl
+   integer(ccint) :: j, num_params
+   real(ccreal) :: start,min,max,width,scale,lnl
    character(len=1024) :: paramname
    Type(TIniFile) :: Ini
 
@@ -371,7 +371,7 @@ contains
    elseif( aname(LEN_TRIM(aname)-1:LEN_TRIM(aname)) == 'py') then
      write(*,*) 'Initializing cosmoslik parameter file: '// TRIM(aname)
      call init_coscos(1)
-     call init_script(aname,slik_id)
+     call init_script(slik_id,trim(aname))
      call get_num_params(slik_id,num_params)
      print *, "num params: ", num_params
      
