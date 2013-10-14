@@ -97,6 +97,7 @@ implicit none
     end type
 
     type(cosmoslik_params) slik_params
+    integer(ccint) slik_id
     !!cosmoslik
 
 
@@ -370,8 +371,8 @@ contains
    elseif( aname(LEN_TRIM(aname)-1:LEN_TRIM(aname)) == 'py') then
      write(*,*) 'Initializing cosmoslik parameter file: '// TRIM(aname)
      call init_coscos(1)
-     call init_script(aname)
-     call get_num_params(num_params)
+     call init_script(aname,slik_id)
+     call get_num_params(slik_id,num_params)
      print *, "num params: ", num_params
      
      slik_params%num_params = num_params
@@ -380,7 +381,7 @@ contains
 
      do j = 1,num_params
         paramname = ' '
-        call get_param_info(j,paramname,start,min,max,width,scale)
+        call get_param_info(slik_id,j,paramname,start,min,max,width,scale)
         slik_params%pnames(j) = adjustl(paramname)
         slik_params%info(1,j) = start
         slik_params%info(2,j) = min
@@ -389,9 +390,9 @@ contains
         slik_params%info(5,j) = scale
 
         print *, trim(slik_params%pnames(j)), start, min, max, width, scale
-        call set_param(j,real(3,8))
+        call set_param(slik_id,j,real(3,8))
      end do
-     call get_lnl(lnl)
+     call get_lnl(slik_id,lnl)
      print *, "lnl: ", lnl
      return
    !! cosmoslik

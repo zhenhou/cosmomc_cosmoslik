@@ -1,4 +1,10 @@
 module coscos
+
+    ! Manually make sure our C types and Fortran types are the same size
+    ! See corresponding line in coscos_wrapper.pyx
+    integer, parameter :: ccint = 8
+    integer, parameter :: ccreal = 8
+
     
     interface
 
@@ -12,35 +18,36 @@ module coscos
             !                         Python error, otherwise 0 to ignore Python errors
             !
             !
-
-            integer :: kill_on_error
+            import :: ccint
+            integer(ccint) :: kill_on_error
 
         end subroutine
 
 
 
-        subroutine init_script(filename)
+        subroutine init_script(slik_id,filename)
             !
             ! Initialize a CosmoSlik script.
             !
-        
+            import ccint
             character(len=*) :: filename
+            integer(ccint) :: slik_id
         
         end subroutine
 
         
         
-        subroutine get_num_params(num_params)
+        subroutine get_num_params(slik_id,num_params)
             !
             ! Get the number of sampled parameters in the CosmoSlik script
             !
-        
-            integer :: num_params
+            import ccint
+            integer(ccint) :: num_params, slik_id
         
         end subroutine
         
         
-        subroutine get_param_info(i,paramname,start,min,max,width,scale)
+        subroutine get_param_info(slik_id,i,paramname,start,min,max,width,scale)
             !
             ! Get parameter info for a given parameter
             !
@@ -59,44 +66,46 @@ module coscos
             !                                        corresponding values
             !                  
             !
-       
-            integer :: i
-            real(8) :: start,min,max,width,scale
+            import :: ccint, ccreal
+            integer(ccint) :: i, slik_id
+            real(ccreal) :: start,min,max,width,scale
             character(len=*) :: paramname
        
         end subroutine
        
 
-        subroutine set_param(i,val)
+        subroutine set_param(slik_id,i,val)
             !
             ! Set a parameter's value
             !
-
-            integer :: i
-            real(8) :: val
+            import :: ccint, ccreal
+            integer(ccint) :: i, slik_id
+            real(ccreal) :: val
 
         end subroutine
 
 
-        subroutine set_cls(cls,lmax)
+        subroutine set_cls(slik_id,cls,lmax)
             !
             ! Set the Cls
             !
             ! Order is TT, EE, BB, TE, EB, TB
             !
-            integer :: lmax
-            real(8), dimension(6,lmax) :: cls
+            import :: ccint, ccreal
+            integer(ccint) :: lmax, slik_id
+            real(ccreal), dimension(6,lmax) :: cls
 
         end subroutine
 
 
-        subroutine get_lnl(lnl)
+        subroutine get_lnl(slik_id,lnl)
             !
             ! Evaluate the CosmoSlik likelihood at the point in parameter space
             ! specified by all the previous calls to set_param
             !
-
-            real(8) :: lnl
+            import :: ccreal, ccint
+            real(ccreal) :: lnl
+            integer(ccint) :: slik_id
 
         end subroutine
 
