@@ -64,27 +64,27 @@ cdef void handle_exception(e):
 
 gscripts = {}
 
-cdef public void init_script_(ccint *ccid, char *name, ccnchar nname):
+cdef public void init_script_(ccint *slik_id, char *name, ccnchar nname):
     try:
         global gscripts
         script = K.load_script(str(add_null_term(name,nname)).strip())
         script._params = dict()
         gscripts[id(script)] = script
-        ccid[0] = id(script)
+        slik_id[0] = id(script)
     except Exception as e:
         handle_exception(e)
 
 
-cdef public void get_num_params_(ccint *ccid, ccint *num_params):
+cdef public void get_num_params_(ccint *slik_id, ccint *num_params):
     try:
         global gscripts
-        num_params[0] = len(gscripts[ccid[0]].get_sampled())
+        num_params[0] = len(gscripts[slik_id[0]].get_sampled())
     except Exception as e:
         handle_exception(e)
 
 
 
-cdef public void get_param_info_(ccint *ccid,
+cdef public void get_param_info_(ccint *slik_id,
                                  ccint *i, 
                                  char *paramname, 
                                  ccreal *start,
@@ -93,7 +93,7 @@ cdef public void get_param_info_(ccint *ccid,
                                  ccnchar nparamname):
     try:
         global gscripts
-        name,info = gscripts[ccid[0]].get_sampled().items()[i[0]-1]
+        name,info = gscripts[slik_id[0]].get_sampled().items()[i[0]-1]
         start[0] = info.start
         min[0] = getattr(info,'min',-inf)
         max[0] = getattr(info,'max',inf)
@@ -103,19 +103,19 @@ cdef public void get_param_info_(ccint *ccid,
         handle_exception(e)
 
 
-cdef public void set_param_(ccint *ccid, ccint *i, ccreal *val):
+cdef public void set_param_(ccint *slik_id, ccint *i, ccreal *val):
     try:
         global gscripts
-        script = gscripts[ccid[0]]
+        script = gscripts[slik_id[0]]
         script._params[script.get_sampled().keys()[i[0]-1]] = val[0]
     except Exception as e:
         handle_exception(e)
 
 
-cdef public void get_lnl_(ccint *ccid, ccreal* lnl):
+cdef public void get_lnl_(ccint *slik_id, ccreal* lnl):
     try:
         global gscripts
-        script = gscripts[ccid[0]]
+        script = gscripts[slik_id[0]]
         lnl[0] = script.evaluate(**script._params)[0]
     except Exception as e:
         handle_exception(e)
