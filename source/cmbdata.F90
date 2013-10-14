@@ -97,6 +97,7 @@ implicit none
     end type
 
     type(cosmoslik_params) slik_params
+    integer(ccint) slik_id
     !!cosmoslik
 
 
@@ -349,8 +350,8 @@ contains
    real(mcp), pointer, dimension(:) :: tmp_arr
    character(LEN=Ini_max_string_len) :: data_format
    integer file_unit
-   integer :: j, num_params
-   real(8) :: start,min,max,width,scale,lnl
+   integer(ccint) :: j, num_params
+   real(ccreal) :: start,min,max,width,scale,lnl
    character(len=1024) :: paramname
    Type(TIniFile) :: Ini
 
@@ -370,8 +371,8 @@ contains
    elseif( aname(LEN_TRIM(aname)-1:LEN_TRIM(aname)) == 'py') then
      write(*,*) 'Initializing cosmoslik parameter file: '// TRIM(aname)
      call init_coscos(1)
-     call init_script(aname)
-     call get_num_params(num_params)
+     call init_script(slik_id,trim(aname))
+     call get_num_params(slik_id,num_params)
      print *, "num params: ", num_params
      
      slik_params%num_params = num_params
@@ -380,7 +381,7 @@ contains
 
      do j = 1,num_params
         paramname = ' '
-        call get_param_info(j,paramname,start,min,max,width,scale)
+        call get_param_info(slik_id,j,paramname,start,min,max,width,scale)
         slik_params%pnames(j) = adjustl(paramname)
         slik_params%info(1,j) = start
         slik_params%info(2,j) = min
@@ -389,10 +390,10 @@ contains
         slik_params%info(5,j) = scale
 
         print *, trim(slik_params%pnames(j)), start, min, max, width, scale
-        !call set_param(j,real(3,8))
+        call set_param(slik_id,j,real(3,8))
      end do
-     !call get_lnl(lnl)
-     !print *, "lnl: ", lnl
+     call get_lnl(slik_id,lnl)
+     print *, "lnl: ", lnl
      return
    !! cosmoslik
 
@@ -998,7 +999,7 @@ contains
     Class(TheoryPredictions) Theory
     real(mcp) :: DataParams(:)
     real(mcp) cl(lmax,num_cls_tot)
-    real(mcp) CMBLnLike, slik_lnl
+    real(mcp) CMBLnLike
     real(mcp) sznorm, szcl(lmax,num_cls_tot)
 
     call ClsFromTheoryData(Theory, cl)
@@ -1010,11 +1011,6 @@ contains
      end if
      if (like%name == 'WMAP') then
        CMBLnLike = MAPLnLike(szcl)
-     !! cosmoslik !!
-     elseif( aname(LEN_TRIM(aname)-1:LEN_TRIM(aname)) == 'py') then
-       call SlikLnLike(slik_params, cl, slik_lnl)
-       CMBLnLike = slik_lnl
-     !! cosmoslik !!
      else
        CMBLnLike = CalcLnLike(szcl,like%dataset)
      end if
