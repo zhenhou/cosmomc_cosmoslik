@@ -159,7 +159,7 @@ bao.o: cmbtypes.o
 HST.o: cmbtypes.o
 supernovae.o: cmbtypes.o
 $(CLSFILE): cmbtypes.o IO.o
-paramdef.o: $(CLSFILE) propose.o samples.o
+paramdef.o: $(CLSFILE) propose.o samples.o coscos.o
 $(PROPOSE): settings.o
 $(PARAMETERIZATION): paramdef.o
 calclike.o: DataLikelihoods.o coscos.o

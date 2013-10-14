@@ -5,6 +5,14 @@ module coscos
     integer, parameter :: ccint = 8
     integer, parameter :: ccreal = 8
 
+    !!cosmoslik
+    type cosmoslik_params
+        integer(ccint)     :: num_params = 0
+        character(1024), pointer, dimension(:) :: pnames
+        real(ccreal), pointer, dimension(:,:) :: info
+    end type
+    !!cosmoslik
+
     
     interface
 
@@ -105,6 +113,21 @@ module coscos
             !
             import :: ccreal, ccint
             real(ccreal) :: lnl
+            integer(ccint) :: slik_id
+
+        end subroutine
+
+
+        subroutine SlikLnLike(slik_id, cls, slik_lnl)
+
+            !
+            ! wrapper combining the handling of parameters and cls
+            ! and call get_lnl
+            !
+
+            import :: ccint, ccreal
+            real(ccreal) :: cls(:,:), slik_lnl
+
             integer(ccint) :: slik_id
 
         end subroutine

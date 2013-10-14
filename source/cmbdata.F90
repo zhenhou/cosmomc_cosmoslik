@@ -88,18 +88,12 @@ implicit none
     contains
     procedure :: LogLike => CMBLnLike
     end type CMBDataLikelihood
-    
-    !!cosmoslik
-    type cosmoslik_params
-        integer     :: num_params = 0
-        character(LEN=Ini_max_string_len), pointer, dimension(:) :: pnames
-        real(mcp), pointer, dimension(:,:) :: info
-    end type
 
+    !! cosmoslik
     type(cosmoslik_params) slik_params
     integer(ccint) slik_id
-    !!cosmoslik
-
+    !! cosmoslik
+    
 
   logical :: init_MAP = .true.
 
@@ -370,6 +364,9 @@ contains
    !! cosmoslik
    elseif( aname(LEN_TRIM(aname)-1:LEN_TRIM(aname)) == 'py') then
      write(*,*) 'Initializing cosmoslik parameter file: '// TRIM(aname)
+
+     like%name = 'Slik'
+
      call init_coscos(1)
      call init_script(slik_id,trim(aname))
      call get_num_params(slik_id,num_params)
@@ -390,10 +387,10 @@ contains
         slik_params%info(5,j) = scale
 
         print *, trim(slik_params%pnames(j)), start, min, max, width, scale
-        call set_param(slik_id,j,real(3,8))
+        !call set_param(slik_id,j,real(3,8))
      end do
-     call get_lnl(slik_id,lnl)
-     print *, "lnl: ", lnl
+     !call get_lnl(slik_id,lnl)
+     !print *, "lnl: ", lnl
      return
    !! cosmoslik
 
@@ -1002,6 +999,8 @@ contains
     real(mcp) CMBLnLike
     real(mcp) sznorm, szcl(lmax,num_cls_tot)
 
+    real(ccreal) :: slik_lnl
+
     call ClsFromTheoryData(Theory, cl)
 
      szcl= cl
@@ -1011,6 +1010,11 @@ contains
      end if
      if (like%name == 'WMAP') then
        CMBLnLike = MAPLnLike(szcl)
+     !! cosmoslik !!
+     elseif(like%name == 'Slik') then
+        call SlikLnLike(slik_id, cl, slik_lnl)
+        CMBLnLike = slik_lnl
+     !! cosmoslik !!
      else
        CMBLnLike = CalcLnLike(szcl,like%dataset)
      end if
