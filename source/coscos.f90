@@ -101,7 +101,7 @@ module coscos
             !
             import :: ccint, ccreal
             integer(ccint) :: lmax, slik_id
-            real(ccreal), dimension(6,lmax) :: cls
+            real(ccreal), dimension(lmax,4) :: cls
 
         end subroutine
 
@@ -113,21 +113,6 @@ module coscos
             !
             import :: ccreal, ccint
             real(ccreal) :: lnl
-            integer(ccint) :: slik_id
-
-        end subroutine
-
-
-        subroutine SlikLnLike(slik_id, cls, slik_lnl)
-
-            !
-            ! wrapper combining the handling of parameters and cls
-            ! and call get_lnl
-            !
-
-            import :: ccint, ccreal
-            real(ccreal) :: cls(:,:), slik_lnl
-
             integer(ccint) :: slik_id
 
         end subroutine

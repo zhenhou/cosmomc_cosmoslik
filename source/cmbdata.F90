@@ -999,8 +999,6 @@ contains
     real(mcp) CMBLnLike
     real(mcp) sznorm, szcl(lmax,num_cls_tot)
 
-    real(ccreal) :: slik_lnl
-
     call ClsFromTheoryData(Theory, cl)
 
      szcl= cl
@@ -1012,13 +1010,32 @@ contains
        CMBLnLike = MAPLnLike(szcl)
      !! cosmoslik !!
      elseif(like%name == 'Slik') then
-        call SlikLnLike(slik_id, cl, slik_lnl)
-        CMBLnLike = slik_lnl
+        CMBLnLike = SlikLnLike(slik_id, cl)
      !! cosmoslik !!
      else
        CMBLnLike = CalcLnLike(szcl,like%dataset)
      end if
 
+ end function
+
+
+ function SlikLnLike(slik_id, cls)
+    
+    !
+    ! wrapper combining the handling of parameters and cls
+    ! and call get_lnl
+    !
+
+    real(ccreal) :: cls(:,:)
+    integer(ccint) :: slik_id
+    real(ccreal) :: slik_lnl
+
+    real(mcp) SlikLnLike
+
+    SlikLnLike = 0.0_mcp
+
+    call set_cls(slik_id, cls, lmax)
+    
  end function
 
 
