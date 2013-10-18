@@ -1034,7 +1034,7 @@ contains
 
     SlikLnLike = 0.0_mcp
 
-    call set_cls(slik_id, cls, lmax)
+    !call set_cls(slik_id, cls, lmax)
     
  end function
 

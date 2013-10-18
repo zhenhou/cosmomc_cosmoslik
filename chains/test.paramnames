@@ -4,20 +4,6 @@
  tau	\tau
  ns	n_s
  logA	{\rm{ln}}(10^{10} A_s)
- aps100	A^{PS}_{100}
- aps143	A^{PS}_{143}
- aps217	A^{PS}_{217}
- acib143	A^{CIB}_{143}
- acib217	A^{CIB}_{217}
- asz143	A^{tSZ}_{143}
- psr	r^{PS}_{143\times217}
- cibr	r^{CIB}_{143\times217}
- ncib	\gamma^{CIB}
- cal0	c_{100}
- cal2	c_{217}
- xi	\xi^{tSZ-CIB}
- aksz	A^{kSZ}
- bm_1_1	\beta^1_1
  omegal*	\Omega_\Lambda
  omegam*	\Omega_m
  sigma8*	\sigma_8
