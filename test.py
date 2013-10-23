@@ -8,7 +8,7 @@ class main(SlikPlugin):
         self.b = param(start=1,scale=1)
 
         self.cosmo = get_plugin('models.cosmology')(
-            Yp = param(0.248, scale=0.05),
+            Yp = param(start=0.248, scale=0.05)
         )
 
         self.sampler = get_plugin("samplers.metropolis_hastings")(self)
