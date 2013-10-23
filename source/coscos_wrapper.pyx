@@ -16,7 +16,8 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 import cosmoslik as K
 import traceback
 import sys, os
-from numpy import inf
+from numpy import inf, pi, arange, zeros, hstack
+from collections import OrderedDict
 
 scripts = None
 kill_on_error = None
@@ -64,11 +65,12 @@ cdef void handle_exception(e):
 
 gscripts = {}
 
-cdef public void init_script_(ccint *slik_id, char *name, ccnchar nname):
+cdef public void init_script_(ccint *slik_id, char *name, ccint *set_cls_externally, ccnchar nname):
     try:
         global gscripts
         script = K.load_script(str(add_null_term(name,nname)).strip())
         script._params = dict()
+        script._set_cls_externally = (set_cls_externally[0]==1)
         gscripts[id(script)] = script
         slik_id[0] = id(script)
     except Exception as e:
@@ -78,10 +80,20 @@ cdef public void init_script_(ccint *slik_id, char *name, ccnchar nname):
 cdef public void get_num_params_(ccint *slik_id, ccint *num_params):
     try:
         global gscripts
-        num_params[0] = len(gscripts[slik_id[0]].get_sampled())
+        num_params[0] = len(get_sampled(gscripts[slik_id[0]]))
     except Exception as e:
         handle_exception(e)
 
+def get_sampled(slik):
+    params = slik.get_sampled()
+    if slik._set_cls_externally:
+        return OrderedDict([(k,v) for k,v in params.items() if not k.startswith('cosmo.')])
+    else:
+        return params 
+    
+cdef get_script(ccint *slik_id):
+    global gscripts
+    return gscripts[slik_id[0]]
 
 
 cdef public void get_param_info_(ccint *slik_id,
@@ -92,8 +104,7 @@ cdef public void get_param_info_(ccint *slik_id,
                                  ccreal *width, ccreal *scale,
                                  ccnchar nparamname):
     try:
-        global gscripts
-        name,info = gscripts[slik_id[0]].get_sampled().items()[i[0]-1]
+        name,info = get_sampled(get_script(slik_id)).items()[i[0]-1]
         start[0] = info.start
         min[0] = getattr(info,'min',-inf)
         max[0] = getattr(info,'max',inf)
@@ -105,21 +116,27 @@ cdef public void get_param_info_(ccint *slik_id,
 
 cdef public void set_param_(ccint *slik_id, ccint *i, ccreal *val):
     try:
-        global gscripts
-        script = gscripts[slik_id[0]]
-        script._params[script.get_sampled().keys()[i[0]-1]] = val[0]
+        script = get_script(slik_id)
+        script._params[get_sampled(script).keys()[i[0]-1]] = val[0]
     except Exception as e:
         handle_exception(e)
 
 
-cdef public void get_lnl_(ccint *slik_id, ccreal* lnl):
+cdef public void get_lnl_(ccint *slik_id, ccreal *lnl):
     try:
-        global gscripts
-        script = gscripts[slik_id[0]]
+        script = get_script(slik_id)
         lnl[0] = script.evaluate(**script._params)[0]
     except Exception as e:
         handle_exception(e)
 
+cdef public void set_cls_(ccint *slik_id, char *type, ccreal *cls, ccint *lmin, ccint *lmax, ccnchar ntype):
+    cdef int i, l
+    try:
+        _cls = hstack([zeros(lmin[0]),arange(lmin[0],lmax[0]+1)*(arange(lmin[0],lmax[0]+1)+1)/2/pi])
+        for i,l in enumerate(arange(lmin[0],lmax[0]+1)): _cls[i]*=cls[l]
+        get_script(slik_id)._params.setdefault('cmb_result',K.SlikDict())['cl_%s'%str(add_null_term(type,ntype))] = _cls
+    except Exception as e:
+        handle_exception(e)
 
 
 

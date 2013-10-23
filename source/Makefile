@@ -9,7 +9,7 @@ else
 F90C     = mpif90
 endif
 
-FFLAGS = -mkl -openmp -O3 -xHost -no-prec-div -fpp -DMPI
+FFLAGS = -mkl -xHost -no-prec-div -fpp -DMPI -g -O0
 LAPACKL = -lmpi
 
 CC = icc

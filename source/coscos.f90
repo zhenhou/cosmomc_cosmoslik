@@ -1,5 +1,8 @@
 module coscos
 
+
+    implicit none
+
     ! Manually make sure our C types and Fortran types are the same size
     ! See corresponding line in coscos_wrapper.pyx
     integer, parameter :: ccint = 8
@@ -33,13 +36,13 @@ module coscos
 
 
 
-        subroutine init_script(slik_id,filename)
+        subroutine init_script(slik_id,filename,set_cls_externally)
             !
             ! Initialize a CosmoSlik script.
             !
             import ccint
             character(len=*) :: filename
-            integer(ccint) :: slik_id
+            integer(ccint) :: slik_id, set_cls_externally
         
         end subroutine
 
@@ -93,15 +96,13 @@ module coscos
         end subroutine
 
 
-        subroutine set_cls(slik_id,cls,lmax)
+        subroutine set_cls(slik_id,type,cls,lmin,lmax)
             !
             ! Set the Cls
             !
-            ! Order is TT, EE, BB, TE, EB, TB
-            !
             import :: ccint, ccreal
-            integer(ccint) :: lmax, slik_id
-            real(ccreal), dimension(lmax,4) :: cls
+            integer(ccint) :: lmin, lmax, slik_id
+            real(ccreal), dimension(lmin:lmax) :: cls
 
         end subroutine
 
