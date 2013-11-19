@@ -1032,9 +1032,12 @@ contains
 
         real(mcp) SlikLnLike
 
-        SlikLnLike = 0.0_mcp
+        call set_cls(slik_id,"TT", cls(2:1000,1),2,1000)
+        call set_cls(slik_id,"TE", cls(2:1000,2),2,1000)
+        call set_cls(slik_id,"EE", cls(2:1000,3),2,1000)
+        call set_cls(slik_id,"BB", cls(2:1000,4),2,1000)
 
-       !call set_cls(slik_id, cls, lmax)
+        call get_lnl(slik_id,SlikLnLike)
     
     end function
 
