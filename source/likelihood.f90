@@ -187,7 +187,9 @@
     use coscos
 
     class(DataLikelihood) :: like
-    type(cosmoslik_params) :: slik_params
+    type(cosmoslik_params), intent(in) :: slik_params
+
+    call ParamNames_init_slik(like%nuisance_params, slik_params%pnames, slik_params%num_params)
 
     end subroutine loadParamNames_slik
     !! cosmoslik !!

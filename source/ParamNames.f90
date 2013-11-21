@@ -122,6 +122,31 @@
 
     end subroutine ParamNames_Init
 
+    !! cosmoslik !!
+    subroutine ParamNames_Init_slik(Names, pnames, num_params)
+    Type(TParamNames) :: Names
+    character(1024),intent(in) :: pnames(1:)
+    integer(8),     intent(in) :: num_params  !! ZH: here we match the integer defined in coscos.f90 - ccint
+    
+    integer :: i, n
+
+    n = int(num_params)
+    call ParamNames_Alloc(Names,n)
+
+    do i=1, n
+        Names%name(i) = trim(adjustl(pnames(i)))
+        Names%label(i) = Names%name(i)  !! ZH: here we just set the labels identical with the names
+        Names%comment(i) = ''
+        Names%is_derived(i) = .false.   !! ZH: here I assume all the slik params are not derived params
+    enddo
+
+    Names%nnames = n
+    Names%num_derived = count(Names%is_derived)
+    Names%num_MCMC = Names%nnames - Names%num_derived
+
+    end subroutine ParamNames_Init_slik
+    !! cosmoslik !!
+
     subroutine ParamNames_AssignItem(Names, Names2,n,i)
     Type(TParamNames), target :: Names, Names2
     integer n, i
