@@ -999,6 +999,10 @@ contains
         real(mcp) CMBLnLike
         real(mcp) sznorm, szcl(lmax,num_cls_tot)
 
+        !! cosmoslik !!
+        integer(ccint) :: j
+        !! cosmoslik !!
+
         call ClsFromTheoryData(Theory, cl)
 
         szcl= cl
@@ -1010,6 +1014,9 @@ contains
             CMBLnLike = MAPLnLike(szcl)
         !! cosmoslik !!
         elseif(like%name == 'Slik') then
+            do j=1, slik_params%num_params
+                call set_param(slik_id,j,DataParams(j))
+            enddo 
             CMBLnLike = SlikLnLike(slik_id, cl)
         !! cosmoslik !!
         else
