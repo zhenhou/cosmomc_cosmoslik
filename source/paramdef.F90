@@ -317,6 +317,8 @@
                 Scales%PWidth(i) = slik_params%info(5,slik_ct)
             endif
         enddo
+
+        slik_params%lmax_computed_cl =  lmax_computed_cl
         !!cosmoslik
         
         if (.not. if_slik) then !!cosmoslik

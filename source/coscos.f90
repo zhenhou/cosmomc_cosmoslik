@@ -11,6 +11,7 @@ module coscos
     !!cosmoslik
     type cosmoslik_params
         integer(ccint)     :: num_params = 0
+        integer(ccint)     :: lmax_computed_cl = 0
         character(1024), pointer, dimension(:) :: pnames
         real(ccreal), pointer, dimension(:,:) :: info
     end type

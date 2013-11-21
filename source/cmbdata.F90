@@ -1034,15 +1034,17 @@ contains
         !
 
         real(ccreal) :: cls(:,:)
-        integer(ccint) :: slik_id
+        integer(ccint) :: slik_id, lmax
         real(ccreal) :: slik_lnl
 
         real(mcp) SlikLnLike
+        
+        lmax = slik_params%lmax_computed_cl
 
-        call set_cls(slik_id,"TT", cls(2:1000,1),2,1000)
-        call set_cls(slik_id,"TE", cls(2:1000,2),2,1000)
-        call set_cls(slik_id,"EE", cls(2:1000,3),2,1000)
-        call set_cls(slik_id,"BB", cls(2:1000,4),2,1000)
+        call set_cls(slik_id,"TT", cls(2:lmax,1),2,lmax)
+        call set_cls(slik_id,"TE", cls(2:lmax,2),2,lmax)
+        call set_cls(slik_id,"EE", cls(2:lmax,3),2,lmax)
+        call set_cls(slik_id,"BB", cls(2:lmax,4),2,lmax)
 
         call get_lnl(slik_id,SlikLnLike)
     
