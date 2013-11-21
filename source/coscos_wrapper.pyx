@@ -70,7 +70,7 @@ cdef public void init_script_(ccint *slik_id, char *name, ccint *set_cls_externa
         global gscripts
         script = K.load_script(str(add_null_term(name,nname)).strip())
         script._params = dict()
-        script._set_cls_externally = (set_cls_externally[0]==1)
+        script.params._cls_set_externally = (set_cls_externally[0]==1)
         gscripts[id(script)] = script
         slik_id[0] = id(script)
     except Exception as e:
@@ -86,7 +86,7 @@ cdef public void get_num_params_(ccint *slik_id, ccint *num_params):
 
 def get_sampled(slik):
     params = slik.get_sampled()
-    if slik._set_cls_externally:
+    if slik.params._cls_set_externally:
         return OrderedDict([(k,v) for k,v in params.items() if not k.startswith('cosmo.')])
     else:
         return params 

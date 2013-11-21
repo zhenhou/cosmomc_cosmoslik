@@ -12,7 +12,7 @@ mask='4'
 spec=('143','143')
 doclean=True
 lrange=(50,2500)
-model='lcdm'
+model='lcdmtaup'
 
 root = '/global/scratch2/sd/marius/us2/'
 
@@ -105,11 +105,13 @@ class main(SlikPlugin):
         print 'Running chain %s...'%output_file
     
     def __call__(self):
-        if not 'cmb_result' in self:
+        
+        if not self._cls_set_externally:
             self.cosmo.As = exp(self.cosmo.logA)*1e-10
             if 'yp' not in model.lower(): self.cosmo.Yp = self.bbn(**self.cosmo)
-#             self.cosmo.H0 = self.hubble_theta.theta_to_hubble(**self.cosmo)
+            self.cosmo.H0 = self.hubble_theta.theta_to_hubble(**self.cosmo)
             self.cmb_result = self.get_cmb(outputs=['cl_TT'],force=True,**self.cosmo)
+        
         
         def egfs_fn(lmax,**kwargs):
             ells = hstack([ones(2),arange(2,lmax)/self.norm_ell])
@@ -129,7 +131,6 @@ class main(SlikPlugin):
 #         self.mspec.get_cl_model(self.cmb_result,self.egfs_result).plot(which=[(('T',spec[0]),('T',spec[1]))],ax=ax)
 #         show()
         #
-        
         
         return lsum(lambda: self.priors(self),
                     lambda: sum(self.lowl(outputs=None,force=True,**self.cosmo).values()),
