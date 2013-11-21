@@ -125,7 +125,10 @@ cdef public void set_param_(ccint *slik_id, ccint *i, ccreal *val):
 cdef public void get_lnl_(ccint *slik_id, ccreal *lnl):
     try:
         script = get_script(slik_id)
+        if not all([k in script._params for k in get_sampled(script)]):
+            raise Exception("CosmoSlik params not set: "+str([k for k in get_sampled(script) if k not in script._params]))
         lnl[0] = script.evaluate(**script._params)[0]
+        script._params = dict()
     except Exception as e:
         handle_exception(e)
 
@@ -133,8 +136,12 @@ cdef public void set_cls_(ccint *slik_id, char *type, ccreal *cls, ccint *lmin, 
     cdef int i, l
     try:
         _cls = hstack([zeros(lmin[0]),arange(lmin[0],lmax[0]+1)*(arange(lmin[0],lmax[0]+1)+1)/2/pi])
-        for i,l in enumerate(arange(lmin[0],lmax[0]+1)): _cls[i]*=cls[l]
+        for i,l in enumerate(arange(lmin[0],lmax[0]+1)): _cls[l]*=cls[i]
         get_script(slik_id)._params.setdefault('cmb_result',K.SlikDict())['cl_%s'%str(add_null_term(type,ntype))] = _cls
+#         from matplotlib.pyplot import semilogy, show, loglog, title
+#         loglog(arange(lmin[0],lmax[0]),_cls[lmin[0]:lmax[0]])
+#         title(str(add_null_term(type,ntype)))
+#         show()
     except Exception as e:
         handle_exception(e)
 

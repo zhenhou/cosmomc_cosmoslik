@@ -103,6 +103,7 @@ module coscos
             import :: ccint, ccreal
             integer(ccint) :: lmin, lmax, slik_id
             real(ccreal), dimension(lmin:lmax) :: cls
+            character(len=*) :: type
 
         end subroutine
 
