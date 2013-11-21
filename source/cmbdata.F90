@@ -1132,8 +1132,10 @@ contains
             call ReadDataset(like, filename)
 
             !! cosmoslik !!
-
-
+            if (trim(like%name) .eq. 'Slik') then
+                call like%loadParamNames_slik(slik_params)
+            endif
+            !! cosmoslik !!
 
             keyname=numcat('cmb_dataset_SZ',i)
             SZTemplate = ''

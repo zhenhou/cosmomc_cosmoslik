@@ -143,7 +143,7 @@ GetDist.o: IO.o samples.o
 supernovae.o: $(SUPERNOVAE)
 IO.o: ParamNames.o settings.o
 samples.o: ObjectLists.o settings.o
-likelihood.o: ObjectLists.o settings.o ParamNames.o
+likelihood.o: ObjectLists.o settings.o ParamNames.o coscos.o
 DataLikelihoods.o: likelihood.o paramdef.o $(DATAMODULES)
 cliklike_CamSpec.o: temp_like.o cmbtypes.o
 cliklike.o: cmbtypes.o
