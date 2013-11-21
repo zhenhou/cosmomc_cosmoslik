@@ -1128,6 +1128,10 @@ contains
             filename = ReadIniFileName(Ini,numcat('cmb_dataset',i))
             call ReadDataset(like, filename)
 
+            !! cosmoslik !!
+
+
+
             keyname=numcat('cmb_dataset_SZ',i)
             SZTemplate = ''
             if (Ini_HasKey_File(Ini,KeyName)) SZTemplate = Ini_Read_String_File(Ini,keyname, .false.)
