@@ -106,8 +106,8 @@ cdef public void get_param_info_(ccint *slik_id,
     try:
         name,info = get_sampled(get_script(slik_id)).items()[i[0]-1]
         start[0] = info.start
-        min[0] = getattr(info,'min',-inf)
-        max[0] = getattr(info,'max',inf)
+        min[0] = getattr(info,'min',getattr(info,'range',[-inf])[0])
+        max[0] = getattr(info,'max',getattr(info,'range',[inf])[-1])
         width[0] = scale[0] = getattr(info,'scale',1)
         memcpy(paramname,<char*>name,len(name))
     except Exception as e:
