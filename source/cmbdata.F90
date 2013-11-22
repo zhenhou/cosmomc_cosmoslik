@@ -89,7 +89,7 @@ module cmbdata
         procedure :: LogLike => CMBLnLike
     end type CMBDataLikelihood
 
-    !! cosmoslik
+    !! cosmoslik 
     type(cosmoslik_params) slik_params
     integer(ccint) slik_id
       !! cosmoslik
