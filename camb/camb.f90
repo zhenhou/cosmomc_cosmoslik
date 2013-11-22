@@ -16,6 +16,7 @@
         Type (ClTransferData) :: ClTransScal,ClTransTens,ClTransVec
         Type (MatterTransferData) :: MTrans
         Type (CAMBparams) :: Params
+        logical :: set_by_PICO
     end Type CAMBdata
 
     !         public CAMB_GetTransfers, CAMB_GetResults, CAMB_GetCls, CAMB_SetDefParams, &
