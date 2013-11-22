@@ -3,13 +3,35 @@
 #these settings for ifort 13 and higher
 #Can remove -xHost if your cluster is not uniform, or specify specific processor optimizations -x...
 
+PICOFORCE = 
+#-D_PICO_FORCE_
+PICOFLAG=-D_PICO_ $(PICOFORCE)
+#PICOFLAG =
+
+ifneq ($(strip $(PICOFLAG)),)
+cmcname=cosmomc_pico
+PICOCAMB = pico_camb.o
+CLSFILE = CMB_Cls_pico.o
+PICO_INC=$(shell python -c "import pypico; print pypico.get_include()")
+PICO_LIB=$(shell python -c "import pypico; print pypico.get_link()")
+ifneq ($(strip $(PICOFORCE)),)
+cmcname=cosmomc_picoforce
+endif
+else
+cmcname=cosmomc
+CLSFILE = CMB_Cls_simple.o
+PICOCAMB=
+PICO_INC=
+PICO_LIB=
+endif
+
 ifeq ($(HOSTNAME),Local)
 F90C     = mpif90 -f90=ifort
 else
 F90C     = mpif90
 endif
 
-FFLAGS = -mkl -xHost -no-prec-div -fpp -DMPI -g -O0 -openmp -CB -traceback
+FFLAGS = -mkl -xHost -no-prec-div -fpp -DMPI -g -O0 -openmp -CB -traceback $(PICOFLAG) $(PICO_INC) -assume byterecl
 LAPACKL = -lmpi
 
 CC = icc
@@ -75,7 +97,7 @@ CLSFILE = CMB_Cls_simple.o
 PARAMETERIZATION = params_CMB.o
 
 F90FLAGS = $(FFLAGS) $(IFLAG)../camb $(INCLUDE)
-LINKFLAGS = -L../camb -lcamb_$(RECOMBINATION) $(LAPACKL) $(F90CRLINK) $(CLIKL)
+LINKFLAGS = -L../camb -lcamb_$(RECOMBINATION) $(LAPACKL) $(F90CRLINK) $(CLIKL) $(PICO_LIB)
 
 DISTFILES = ParamNames.o Matrix_utils.o settings.o ObjectLists.o samples.o IO.o GetDist.o
 
@@ -111,7 +133,7 @@ LIKEFILES =  DataLikelihoods.o calclike.o
 
 OBJFILES = ObjectLists.o ParamNames.o Matrix_utils.o settings.o samples.o IO.o GeneralTypes.o cmbtypes.o Planck_like.o  \
 	likelihood.o bbn.o $(DATAMODULES) $(CLSFILE) cmbdata.o $(PROPOSE) paramdef.o  $(PARAMETERIZATION) $(LIKEFILES) \
-	EstCovmat.o PowellConstrainedMinimize.o postprocess.o MCMC.o minimize.o driver.o coscos_wrapper.o
+	EstCovmat.o PowellConstrainedMinimize.o postprocess.o MCMC.o minimize.o driver.o coscos_wrapper.o $(PICOCAMB)
 
 
 ifeq ($(EXTDATA),WIGZ)
@@ -158,14 +180,14 @@ mpk.o: cmbtypes.o
 bao.o: cmbtypes.o
 HST.o: cmbtypes.o
 supernovae.o: cmbtypes.o
-$(CLSFILE): cmbtypes.o IO.o
+$(CLSFILE): cmbtypes.o IO.o $(PICOCAMB)
 paramdef.o: $(CLSFILE) propose.o samples.o coscos.o
 $(PROPOSE): settings.o
 $(PARAMETERIZATION): paramdef.o
 calclike.o: DataLikelihoods.o coscos.o
 postprocess.o: calclike.o
 MCMC.o: calclike.o
-driver.o: EstCovmat.o MCMC.o minimize.o $(PARAMETERIZATION)
+driver.o: EstCovmat.o MCMC.o minimize.o $(PARAMETERIZATION) $(PICOCAMB)
 minimize.o: PowellConstrainedMinimize.o calclike.o
 
 ifneq ($(highL),)
@@ -204,7 +226,7 @@ coscos_wrapper.c: coscos_wrapper.pyx
 
 
 cosmomc: camb $(OBJFILES)
-	$(F90C) -o ../cosmomc $(OBJFILES) $(LINKFLAGS) $(F90FLAGS)
+	$(F90C) -o ../$(cmcname) $(OBJFILES) $(LINKFLAGS) $(F90FLAGS)
 
 
 clean: cleancosmomc
