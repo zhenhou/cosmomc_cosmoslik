@@ -16,6 +16,11 @@
     use camb
     use GaugeInterface, only : Eqns_name
     use DefineParameterization
+!! pico !!
+#ifdef _PICO_
+    use pico_camb
+#endif
+!! pico !!
 
     implicit none
 
@@ -98,6 +103,13 @@
     end if
 
     action = Ini_Read_Int('action',action_MCMC)
+
+!! pico !!
+#ifdef _PICO_
+    call fpico_load(trim(Ini_Read_String("pico_datafile")))
+    call fpico_set_verbose(Ini_Read_Logical("pico_verbose",.false.))
+#endif
+!! pico !!
 
     propose_scale = Ini_Read_Real('propose_scale',2.4)
 
