@@ -95,7 +95,9 @@ endif
 #GIT_HASHTAG = "git log --pretty=format:'%H:%cd' -n 1"
 
 PROPOSE = propose.o
+## pico_on ##
 #CLSFILE = CMB_Cls_simple.o
+## pico_off ##
 
 #Can use params_H if you prefer more generic parameters
 PARAMETERIZATION = params_CMB.o
