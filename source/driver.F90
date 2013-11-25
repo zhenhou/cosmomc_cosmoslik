@@ -17,11 +17,11 @@
     use cmbtypes
     use GaugeInterface, only : Eqns_name
     use DefineParameterization
-!! pico !!
+!! pico_on !!
 #ifdef _PICO_
     use pico_camb
 #endif
-!! pico !!
+!! pico_off !!
 
     implicit none
 
@@ -106,12 +106,12 @@
 
     action = Ini_Read_Int('action',action_MCMC)
 
-!! pico !!
+!! pico_on !!
 #ifdef _PICO_
     call fpico_load(trim(Ini_Read_String("pico_datafile")))
     call fpico_set_verbose(Ini_Read_Logical("pico_verbose",.false.))
 #endif
-!! pico !!
+!! pico_off !!
 
     propose_scale = Ini_Read_Real('propose_scale',2.4)
 

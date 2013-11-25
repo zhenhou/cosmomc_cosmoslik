@@ -430,7 +430,10 @@
 
     if (Feedback > 0) then
         write(*,*) MPIRank, 'Stopping as have ',samples_to_get ,' samples. '
+        !! pico_on
+        !if (use_fast_slow) write(*,*) 'slow changes', slow_changes, 'semi-slow changes', semislow_changes
         if (use_fast_slow) write(*,*) 'slow changes', slow_changes, 'semi-slow changes', semislow_changes, 'pico calls',pico_calls
+        !! pico_off !!
     end if
 
     end subroutine MCMCsample

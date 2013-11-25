@@ -45,7 +45,10 @@
     integer :: Num = 0, num_accept=0
     !zero unless from checkpoint
     integer :: burn_in = 2 !Minimum to get sensible answers
+    !! pico_on !!
+    !integer :: semislow_changes=0, slow_changes=0
     integer :: semislow_changes=0, slow_changes=0,pico_calls=0
+    !! pico_off !!
     integer :: checkpoint_burn = 0
 
     logical :: estimate_propose_matrix = .false.
@@ -548,7 +551,10 @@
                 if (Feedback > 0) then
                     write (*,*) trim(concat('Chain',instance, ', MPI done ''burn'', Samples = ',sample_num))//', like = ',real(like)
                     write (*,*) 'Time: ', MPI_WTime() - MPI_StartTime, 'output lines=',output_lines
+                    !! pico_on !!
+                    !if (use_fast_slow) write(*,*) 'slow changes', slow_changes, 'semi-slow changes', semislow_changes
                     if (use_fast_slow) write(*,*) 'slow changes', slow_changes, 'semi-slow changes', semislow_changes,'pico calls',pico_calls
+                    !! pico_off !!
                 end if
 
                 !Here we make something like an MPE_IBARRIER to see if all threads have passed burn in
@@ -687,11 +693,17 @@
                         if (Feedback > 1 .and. MPIRank==0) write (*,*) 'Convergence e-values: ', real(evals)
                         if (Feedback > 0 .and. MPIRank==0) then
                             write (*,*) 'Current convergence R-1 = ',real(R), ' chain steps =',sample_num
+                            !! pico_on !!
+                            !if (use_fast_slow) write(*,*) 'slow changes', slow_changes, 'power changes', semislow_changes
                             if (use_fast_slow) write(*,*) 'slow changes', slow_changes, 'power changes', semislow_changes,'pico calls',pico_calls
+                            !! pico_off !!
                         end if
                         if (logfile_unit/=0) then
                             write(logLine,*) 'Current convergence R-1 = ',real(R), ' chain steps =',sample_num
+                            !! pico_on !!
+                            !if (use_fast_slow) write(logLine,*) 'slow changes', slow_changes, 'power changes', semislow_changes
                             if (use_fast_slow) write(logLine,*) 'slow changes', slow_changes, 'power changes', semislow_changes,'pico calls',pico_calls
+                            !! pico_off !!
                             call IO_WriteLog(logfile_unit,logLine)
                         end if
                         if (R < MPI_R_Stop .and. flukecheck) then
