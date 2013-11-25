@@ -89,10 +89,10 @@ module cmbdata
         procedure :: LogLike => CMBLnLike
     end type CMBDataLikelihood
 
-    !! cosmoslik 
+    !! cosmoslik_on !!
     type(cosmoslik_params) slik_params
     integer(ccint) slik_id
-      !! cosmoslik
+    !! cosmoslik_off !!
     
 
     logical :: init_MAP = .true.
@@ -361,7 +361,7 @@ contains
             like%speed = -1
             return
    
-        !! cosmoslik
+        !! cosmoslik_on !!
         elseif( aname(LEN_TRIM(aname)-1:LEN_TRIM(aname)) == 'py') then
             write(*,*) 'Initializing cosmoslik parameter file: '// TRIM(aname)
 
@@ -387,12 +387,9 @@ contains
                 slik_params%info(5,j) = scale
 
                 print *, trim(slik_params%pnames(j)), start, min, max, width, scale
-               !call set_param(slik_id,j,real(3,8))
             end do
-            !call get_lnl(slik_id,lnl)
-            !print *, "lnl: ", lnl
             return
-        !! cosmoslik
+        !! cosmoslik_off !!
 
         elseif( aname(LEN_TRIM(aname)-5:LEN_TRIM(aname)) == 'newdat') then
             !Carlo format for polarized Boomerang et al.
@@ -999,9 +996,9 @@ contains
         real(mcp) CMBLnLike
         real(mcp) sznorm, szcl(lmax,num_cls_tot)
 
-        !! cosmoslik !!
+        !! cosmoslik_on !!
         integer(ccint) :: j
-        !! cosmoslik !!
+        !! cosmoslik_off !!
 
         call ClsFromTheoryData(Theory, cl)
 
@@ -1012,13 +1009,13 @@ contains
         end if
         if (like%name == 'WMAP') then
             CMBLnLike = MAPLnLike(szcl)
-        !! cosmoslik !!
+        !! cosmoslik_on !!
         elseif(like%name == 'Slik') then
             do j=1, slik_params%num_params
                 call set_param(slik_id,j,DataParams(j))
             enddo 
             CMBLnLike = SlikLnLike(slik_id, cl)
-        !! cosmoslik !!
+        !! cosmoslik_off !!
         else
             CMBLnLike = CalcLnLike(szcl,like%dataset)
         end if
@@ -1140,11 +1137,11 @@ contains
             filename = ReadIniFileName(Ini,numcat('cmb_dataset',i))
             call ReadDataset(like, filename)
 
-            !! cosmoslik !!
+            !! cosmoslik_on !!
             if (trim(like%name) .eq. 'Slik') then
                 call like%loadParamNames_slik(slik_params)
             endif
-            !! cosmoslik !!
+            !! cosmoslik_off !!
 
             keyname=numcat('cmb_dataset_SZ',i)
             SZTemplate = ''

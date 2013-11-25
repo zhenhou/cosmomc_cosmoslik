@@ -46,9 +46,9 @@
         !set generic_mcmc=.true. in settings.f90, then write function here returning -Ln(Likelihood)
         !Parameter array is Params%P
         
-        !! cosmoslik test !! 
+        !! cosmoslik_on !! 
         GenericLikelihoodFunction = Params%P(1)**2 + Params%P(2)**2
-        !! cosmoslik test !!
+        !! cosmoslik_off !!
 
         !GenericLikelihoodFunction = LogZero
         !call MpiStop('GenericLikelihoodFunction: need to write this function!')
