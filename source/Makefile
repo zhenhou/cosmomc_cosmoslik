@@ -1,3 +1,29 @@
+PICOFORCE = 
+#-D_PICO_FORCE_
+PICOFLAG=-D_PICO_ $(PICOFORCE)
+#PICOFLAG =
+
+default: cosmomc		
+all : cosmomc getdist
+ifneq ($(strip $(PICOFLAG)),)
+cmcname=cosmomc_pico
+PICOCAMB = pico_camb.o
+CLSFILE = CMB_Cls_pico.o
+PICO_INC=$(shell python -c "import pypico; print pypico.get_include()")
+PICO_LIB=$(shell python -c "import pypico; print pypico.get_link()")
+#PICO_INC=-I/usr/include/python2.7 -I/usr/include/python2.7 -I/usr/lib/python2.7/dist-packages/numpy/core/include -I/home/hou/.local/lib/python2.7/site-packages/pypico
+#PICO_LIB=-L/home/hou/.local/lib/python2.7/site-packages/pypico -lpico  -L/usr/lib -lpthread -ldl -lutil -lm -lpython2.7
+ifneq ($(strip $(PICOFORCE)),)
+cmcname=cosmomc_picoforce
+endif
+else
+cmcname=cosmomc
+CLSFILE = CMB_Cls_simple.o
+PICOCAMB=
+PICO_INC=
+PICO_LIB=
+endif
+
 
 #Intel MPI
 #these settings for ifort 13 and higher
@@ -8,7 +34,7 @@ else
 F90C     = mpif90
 endif
 
-FFLAGS = -mkl -openmp -O4 -xHost -no-prec-div -fpp -DMPI -g -openmp -CB -traceback
+FFLAGS = -mkl -openmp -O4 -xHost -no-prec-div -fpp -DMPI -g -openmp -CB -traceback $(PICOFLAG) $(PICO_INC) -assume byterecl
 LAPACKL = -lmpi
 
 CC = icc
@@ -69,7 +95,7 @@ endif
 #GIT_HASHTAG = "git log --pretty=format:'%H:%cd' -n 1"
 
 PROPOSE = propose.o
-CLSFILE = CMB_Cls_simple.o
+#CLSFILE = CMB_Cls_simple.o
 
 #Can use params_H if you prefer more generic parameters
 PARAMETERIZATION = params_CMB.o

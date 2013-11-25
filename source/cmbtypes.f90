@@ -15,7 +15,11 @@
 
     !l_max. Tensors are not computed unless compute_tensors = T in input file
     !Make these multiples of 50, should be 50 more than you need accurately
-    integer, parameter :: lmax = 6500, lmax_tensor = 400 !note only lmax_computed_cl is actually calculated
+
+    !! pico_on !!
+    !integer, parameter :: lmax = 6500, lmax_tensor = 400 !note only lmax_computed_cl is actually calculated
+    integer, parameter :: lmax = 6500, lmax_camb=5600, lmax_tensor = 400 !note only lmax_computed_cl is actually calculated
+    !! pico_off !!
 
     !redshifts for output of BAO_dv background parameters
     real(mcp), target :: z_outputs(1) = [0.57_mcp]
