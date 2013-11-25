@@ -26,9 +26,9 @@
     procedure :: LogLikeTheory !same as above when extra info not needed
     procedure :: loadParamNames
 
-    !! cosmoslik !!
+    !! cosmoslik_on !!
     procedure :: loadParamNames_slik
-    !! cosmoslik !!
+    !! cosmoslik_off !!
 
     procedure :: checkConflicts
     end type DataLikelihood
@@ -182,7 +182,7 @@
 
     end subroutine loadParamNames
 
-    !! cosmoslik !!
+    !! cosmoslik_on !!
     subroutine loadParamNames_slik(like, slik_params)
     use coscos
 
@@ -192,7 +192,7 @@
     call ParamNames_init_slik(like%nuisance_params, slik_params%pnames, slik_params%num_params)
 
     end subroutine loadParamNames_slik
-    !! cosmoslik !!
+    !! cosmoslik_off !!
 
     function checkConflicts(like, full_list) result(OK)
     !if for some reasons various likelihoods cannot be used at once
