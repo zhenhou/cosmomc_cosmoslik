@@ -1,7 +1,9 @@
     module CalcLike
     use cmbtypes
     use DataLikelihoodList
+    !! cosmoslik_on !!
     use coscos
+    !! cosmoslik_off !!
     implicit none
 
     real(mcp) :: Temperature  = 1
@@ -45,13 +47,13 @@
         !Used when you want to plug in your own CMB-independent likelihood function:
         !set generic_mcmc=.true. in settings.f90, then write function here returning -Ln(Likelihood)
         !Parameter array is Params%P
-        
-        !! cosmoslik_on !! 
-        GenericLikelihoodFunction = Params%P(1)**2 + Params%P(2)**2
-        !! cosmoslik_off !!
 
+        !! cosmoslik_on !!
         !GenericLikelihoodFunction = LogZero
         !call MpiStop('GenericLikelihoodFunction: need to write this function!')
+
+        GenericLikelihoodFunction = Params%P(1)**2 + Params%P(2)**2
+        !! cosmoslik_off !!
     end if
 
     end function GenericLikelihoodFunction

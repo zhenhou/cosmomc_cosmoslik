@@ -82,19 +82,10 @@
 
     logical    :: MPI_StartSliceSampling = .false.
 
-    integer,parameter :: time_dp = KIND(1.d0)
     real(time_dp) ::  MPI_StartTime
 
     real(mcp), private, allocatable, dimension(:,:) :: MPICovmat
     logical :: StartCovMat = .false.
-
-#ifdef MPI
-#ifdef SINGLE
-    integer, parameter :: MPI_real_mcp = MPI_REAL
-#else
-    integer, parameter :: MPI_real_mcp = MPI_DOUBLE_PRECISION
-#endif
-#endif
 
     contains
 
@@ -139,44 +130,6 @@
     stop
     end subroutine DoStop
 
-    function TimerTime()
-    real(mcp) time
-    real(time_dp) :: TimerTime
-#ifdef MPI
-    TimerTime = MPI_WTime()
-#else
-    call cpu_time(time)
-    TimerTime=  time
-#endif
-    end function TimerTime
-
-    subroutine Timer(Msg)
-    character(LEN=*), intent(in), optional :: Msg
-    real(time_dp), save :: timer_start
-
-    if (present(Msg)) then
-        write (*,*) trim(Msg)//': ', TimerTime() - timer_start
-    end if
-    timer_start= TimerTime()
-
-    end subroutine Timer
-
-    subroutine DoAbort(S)
-
-    character(LEN=*), intent(in), optional :: S
-#ifdef MPI
-    integer ierror
-#endif
-    if (present(S)) write (*,*) trim(S)
-#ifdef MPI
-    call MPI_Abort(MPI_COMM_WORLD,ierror,ierror)
-#endif
-
-#ifdef DECONLY
-    pause
-#endif
-    stop
-    end subroutine DoAbort
 
     subroutine ParamError(str,param)
     character(LEN=*), intent(in) :: str
@@ -252,11 +205,11 @@
     Type(DataLikelihood), pointer :: DataLike
     integer :: oversample_fast= 1
     logical first
-    
-    !!cosmoslik
+
+    !! cosmoslik_on !!
     integer :: slik_ct
     logical :: if_slik = .false.
-    !!cosmoslik
+    !! cosmoslik_off !!
 
     output_lines = 0
 
@@ -301,11 +254,7 @@
 
     GaussPriors%std=0 !no priors by default
     do i=1,num_params
-        !!ZH print
-        !print*, trim(NameMapping%name(i))
-        !!ZH print
-        
-        !!cosmoslik
+        !! cosmoslik_on !!
         if_slik = .false.
         do slik_ct=1, slik_params%num_params
             if ((NameMapping%name(i)) .eq. trim(slik_params%pnames(slik_ct))) then
@@ -319,13 +268,13 @@
         enddo
 
         slik_params%lmax_computed_cl =  lmax_computed_cl
-        !!cosmoslik
-        
-        if (.not. if_slik) then !!cosmoslik
+
+        if (.not. if_slik) then
             InLine =  ParamNames_ReadIniForParam(NameMapping,Ini,'param',i)
             if (InLine=='') call ParamError('parameter ranges not found',i)
             read(InLine, *, err = 100, end =100) center, Scales%PMin(i), Scales%PMax(i), Scales%StartWidth(i), Scales%PWidth(i)
-        endif !!cosmoslik
+        endif
+        !! cosmoslik_off !!
 
         if (Scales%PWidth(i)/=0) then
             InLine =  ParamNames_ReadIniForParam(NameMapping,Ini,'prior',i)
@@ -1068,12 +1017,12 @@
 
     numderived =Parameterization%CalcDerivedParams(P%P,P%Theory, derived)
 
-    allocate(output_array(num_params_used + numderived + num_matter_power ))
+    allocate(output_array(num_params_used + numderived + P%Theory%num_k ))
     output_array(1:num_params_used) =  P%P(params_used)
     output_array(num_params_used+1:num_params_used+numderived) =  derived%P
     deallocate(derived%P)
 
-    output_array(num_params_used+numderived+1:num_params_used+numderived+num_matter_power) = &
+    output_array(num_params_used+numderived+1:num_params_used+numderived+P%Theory%num_k) = &
     P%Theory%matter_power(:,1)
 
     call IO_OutputChainRow(outfile_handle, mult, like, output_array)

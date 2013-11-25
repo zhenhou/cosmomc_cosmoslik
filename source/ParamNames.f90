@@ -122,7 +122,7 @@
 
     end subroutine ParamNames_Init
 
-    !! cosmoslik !!
+    !! cosmoslik_on !!
     subroutine ParamNames_Init_slik(Names, pnames, num_params)
     Type(TParamNames) :: Names
     character(1024),intent(in) :: pnames(1:)
@@ -145,7 +145,7 @@
     Names%num_MCMC = Names%nnames - Names%num_derived
 
     end subroutine ParamNames_Init_slik
-    !! cosmoslik !!
+    !! cosmoslik_off !!
 
     subroutine ParamNames_AssignItem(Names, Names2,n,i)
     Type(TParamNames), target :: Names, Names2

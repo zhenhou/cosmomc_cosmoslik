@@ -2,36 +2,13 @@
 #Intel MPI
 #these settings for ifort 13 and higher
 #Can remove -xHost if your cluster is not uniform, or specify specific processor optimizations -x...
-
-PICOFORCE = 
-#-D_PICO_FORCE_
-PICOFLAG=-D_PICO_ $(PICOFORCE)
-#PICOFLAG =
-
-ifneq ($(strip $(PICOFLAG)),)
-cmcname=cosmomc_pico
-PICOCAMB = pico_camb.o
-CLSFILE = CMB_Cls_pico.o
-PICO_INC=$(shell python -c "import pypico; print pypico.get_include()")
-PICO_LIB=$(shell python -c "import pypico; print pypico.get_link()")
-ifneq ($(strip $(PICOFORCE)),)
-cmcname=cosmomc_picoforce
-endif
-else
-cmcname=cosmomc
-CLSFILE = CMB_Cls_simple.o
-PICOCAMB=
-PICO_INC=
-PICO_LIB=
-endif
-
 ifeq ($(HOSTNAME),Local)
 F90C     = mpif90 -f90=ifort
 else
 F90C     = mpif90
 endif
 
-FFLAGS = -mkl -xHost -no-prec-div -fpp -DMPI -g -O0 -openmp -CB -traceback $(PICOFLAG) $(PICO_INC) -assume byterecl
+FFLAGS = -mkl -openmp -O4 -xHost -no-prec-div -fpp -DMPI -g -openmp -CB -traceback
 LAPACKL = -lmpi
 
 CC = icc
@@ -39,8 +16,7 @@ CC = icc
 #use "make RECOMBINATION=cosmorec" to build with CosmoRec rather than RECFAST default
 RECOMBINATION ?=recfast
 
-#set EXTDATA=WIGZ to use WiggleZ MPK module
-EXTDATA=WIGZ
+EXTDATA=
 
 #use PRECISION=SINGLE to use single precision
 PRECISION ?=
@@ -59,7 +35,9 @@ highL ?=
 #highL = ../highL
 
 IFLAG = -I
+## cosmoslik_on ##
 INCLUDE = $(shell python-config --includes)
+## cosmoslik_off ##
 
 #clik path and library
 ifeq ($(PLANCKLIKE),cliklike)
@@ -127,18 +105,13 @@ endif
 
 SUPERNOVAE = supernovae_Union2.o supernovae_SNLS.o
 
-DATAMODULES = $(PLANCKLIKEFILES) wigglez.o mpk.o bao.o $(SUPERNOVAE) supernovae.o HST.o SDSSLy-a-v3.o
+DATAMODULES = $(PLANCKLIKEFILES) power_spec.o wigglez.o mpk.o bao.o $(SUPERNOVAE) supernovae.o HST.o SDSSLy-a-v3.o
 
 LIKEFILES =  DataLikelihoods.o calclike.o
 
 OBJFILES = ObjectLists.o ParamNames.o Matrix_utils.o settings.o samples.o IO.o GeneralTypes.o cmbtypes.o Planck_like.o  \
 	likelihood.o bbn.o $(DATAMODULES) $(CLSFILE) cmbdata.o $(PROPOSE) paramdef.o  $(PARAMETERIZATION) $(LIKEFILES) \
 	EstCovmat.o PowellConstrainedMinimize.o postprocess.o MCMC.o minimize.o driver.o coscos_wrapper.o $(PICOCAMB)
-
-
-ifeq ($(EXTDATA),WIGZ)
-F90FLAGS += -DWIGZ
-endif
 
 F90CRLINK =
 
@@ -175,8 +148,9 @@ Planck_like.o: cmbtypes.o
 cmbdata.o: Planck_like.o coscos_wrapper.o coscos.o
 coscos_wrapper.o: coscos.o
 bbn.o: settings.o likelihood.o
-wigglez.o: cmbtypes.o
-mpk.o: cmbtypes.o
+powerspec.o : cmbtypes.o
+wigglez.o: cmbtypes.o power_spec.o
+mpk.o: cmbtypes.o power_spec.o
 bao.o: cmbtypes.o
 HST.o: cmbtypes.o
 supernovae.o: cmbtypes.o
@@ -203,7 +177,9 @@ else
 F90FLAGS += -DNOWMAP
 endif
 
-LINKFLAGS += -L$(shell python-config --prefix)/lib $(shell python-config --libs) 
+## cosmoslik_on ##
+LINKFLAGS += -L$(shell python-config --prefix)/lib $(shell python-config --libs)
+## cosmoslik_off ##
 
 export FFLAGS
 export F90C
@@ -214,9 +190,10 @@ export F90C
 %.o: %.c
 	$(CC) $(GSLINC) -c $*.c $(INCLUDE)
 
-    
+## cosmoslik_on ##
 coscos_wrapper.c: coscos_wrapper.pyx
 	cython $?
+## cosmoslik_off ##
 
 %.o: %.f90
 	$(F90C) $(F90FLAGS) -c $*.f90
@@ -230,7 +207,7 @@ cosmomc: camb $(OBJFILES)
 
 
 clean: cleancosmomc
-	rm -f ../camb/*.o ../camb/*.obj ../camb/*.mod
+	rm -f ../camb/*.o ../camb/*.obj ../camb/*.mod ../camb/libcamb_$(RECOMBINATION).a
 
 cleancosmomc:
 	rm -f *.o *.mod *.d *.pc *.obj ../core coscos_wrapper.c coscos_wrapper.h
