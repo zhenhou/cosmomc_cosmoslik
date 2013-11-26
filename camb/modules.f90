@@ -1043,7 +1043,10 @@
 
     if (associated(CTrans%Limber_l_min)) then
         do i=1, CTrans%NumSources
-            if (CTrans%Limber_l_min(i)/=0) then
+            !! pico_on test !!
+            !if (CTrans%Limber_l_min(i)/=0) then
+            if (CTrans%Limber_l_min(i) > 0) then
+            !! pico_off test !!
                 do j=CTrans%Limber_l_min(i), CTrans%ls%l0
                     deallocate(CTrans%Limber_windows(i, j)%k, STAT = st)
                     deallocate(CTrans%Limber_windows(i, j)%Source, STAT = st)
