@@ -7,6 +7,7 @@ default: cosmomc
 all : cosmomc getdist
 ifneq ($(strip $(PICOFLAG)),)
 cmcname=cosmomc_pico
+CAMBDIR=camb_Oct13_pico
 PICOCAMB = pico_camb.o
 CLSFILE = CMB_Cls_pico.o
 PICO_INC=$(shell python -c "import pypico; print pypico.get_include()")
@@ -18,6 +19,7 @@ cmcname=cosmomc_picoforce
 endif
 else
 cmcname=cosmomc
+CAMBDIR = camb
 CLSFILE = CMB_Cls_simple.o
 PICOCAMB=
 PICO_INC=
@@ -102,8 +104,8 @@ PROPOSE = propose.o
 #Can use params_H if you prefer more generic parameters
 PARAMETERIZATION = params_CMB.o
 
-F90FLAGS = $(FFLAGS) $(IFLAG)../camb $(INCLUDE)
-LINKFLAGS = -L../camb -lcamb_$(RECOMBINATION) $(LAPACKL) $(F90CRLINK) $(CLIKL) $(PICO_LIB)
+F90FLAGS = $(FFLAGS) $(IFLAG)../$(CAMBDIR) $(INCLUDE)
+LINKFLAGS = -L../$(CAMBDIR) -lcamb_$(RECOMBINATION) $(LAPACKL) $(F90CRLINK) $(CLIKL) $(PICO_LIB)
 
 DISTFILES = ParamNames.o Matrix_utils.o settings.o ObjectLists.o samples.o IO.o GetDist.o
 
@@ -170,7 +172,7 @@ likelihood.o: ObjectLists.o settings.o ParamNames.o coscos.o
 DataLikelihoods.o: likelihood.o paramdef.o $(DATAMODULES)
 cliklike_CamSpec.o: temp_like.o cmbtypes.o
 cliklike.o: cmbtypes.o
-settings.o: ../camb/libcamb_$(RECOMBINATION).a
+settings.o: ../$(CAMBDIR)/libcamb_$(RECOMBINATION).a
 cmbtypes.o: settings.o likelihood.o GeneralTypes.o
 Planck_like.o: cmbtypes.o
 cmbdata.o: Planck_like.o coscos_wrapper.o coscos.o
@@ -235,7 +237,7 @@ cosmomc: camb $(OBJFILES)
 
 
 clean: cleancosmomc
-	rm -f ../camb/*.o ../camb/*.obj ../camb/*.mod ../camb/libcamb_$(RECOMBINATION).a
+	rm -f ../$(CAMBDIR)/*.o ../$(CAMBDIR)/*.obj ../$(CAMBDIR)/*.mod ../$(CAMBDIR)/libcamb_$(RECOMBINATION).a
 
 cleancosmomc:
 	rm -f *.o *.mod *.d *.pc *.obj ../core coscos_wrapper.c coscos_wrapper.h
@@ -247,7 +249,7 @@ getdist: camb $(DISTFILES)
 #If you want to use the ppf module, change equations_ppf to equations
 #and halofit_ppf to halofit also comment out wa_ppf in CMB_Cls_simple.f90
 camb:
-	cd ../camb && \
+	cd ../$(CAMBDIR) && \
 	$(MAKE) --file=Makefile_main libcamb_$(RECOMBINATION).a \
 	RECOMBINATION=$(RECOMBINATION) EQUATIONS=equations_ppf NONLINEAR=halofit_ppf
 
