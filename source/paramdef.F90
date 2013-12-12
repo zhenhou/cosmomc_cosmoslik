@@ -26,6 +26,9 @@
     contains
     procedure :: ReadModel
     procedure :: WriteModel
+    !! ZH_change_on !!
+    procedure :: WriteSingleCls
+    !! ZH_change_off !!
     end Type
 
     Type ParamScale
@@ -914,6 +917,30 @@
     if (flush_write) call FlushFile(i)
 
     end subroutine WriteModel
+
+    !! ZH_change_on !!
+    subroutine WriteSingleCls(Params, aname, like)
+    Class(ParamSet) :: Params
+    character(*), intent(in)    :: aname
+    real(mcp), intent(in)       :: like
+    integer :: file_unit, i
+
+    Type(DataLikelihood), pointer :: DataLike
+    
+    call CreateTxtFile(aname, file_unit)
+    write(file_unit,*) "# logL" 
+    do i=1, DataLikelihoods%Count
+        DataLike => DataLikelihoods%Item(i)
+        write(file_unit,'(A20,E18.9)') adjustl(DataLike%name), Params%Likelihoods(i)
+    enddo
+
+    write(file_unit,*) "# parameters"
+
+    call Params%Theory%WriteAsciiCls(aname, file_unit)
+
+    call CloseFile(file_unit)
+    end subroutine WriteSingleCls
+    !! ZH_change_off !!
 
     subroutine ReadModel(Params,  i, has_likes, mult, like, error)
     Class (ParamSet) :: Params

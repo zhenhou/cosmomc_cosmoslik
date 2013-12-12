@@ -31,6 +31,9 @@
 
         logical redo_no_new_data !true to make no new .data files to save space
         character(LEN=128) :: redo_like_name
+        !! ZH_change_on !!
+        character(LEN=Ini_max_string_len) :: redo_cls_outroot
+        !! ZH_change_off !!
     end Type TPostParams
 
     Type(TPostParams) :: PostParams
@@ -59,6 +62,11 @@
     PostParams%redo_no_new_data = Ini_Read_Logical('redo_no_new_data',.false.)
     PostParams%redo_like_name = Ini_Read_String('redo_like_name')
 
+    !! ZH_change_on !!
+    PostParams%redo_cls_outroot = Ini_Read_String('redo_cls_outroot')
+    !! ZH_change_off !!
+
+
     if (PostParams%redo_from_text .and. (PostParams%redo_add .or. PostParams%redo_like_name/='')) &
     call Mpistop('redo_new_likes requires .data files, not from text')
 
@@ -84,6 +92,10 @@
     real(mcp) max_like, max_truelike
     integer error,num, debug
     character (LEN=Ini_max_string_len) :: post_root
+    !! ZH_change_on !!
+    character (LEN=Ini_max_string_len) :: cls_text_file
+    character (LEN=100) :: num_idx
+    !! ZH_change_off !!
     integer i, infile_handle
     integer :: outdata_handle=-1
     Type (ParamSet) :: Params
@@ -290,6 +302,15 @@
                         call WriteParams(Params, mult,like)
                     end if
                     if (outdata_handle>=0) call Params%WriteModel(outdata_handle, truelike,mult)
+
+                    !! ZH_change_on !!
+                    if (PostParams%redo_cls_outroot /= '') then
+                        write(num_idx,'(I10)') num
+                        cls_text_file = trim(adjustl(PostParams%redo_cls_outroot))//'_'//trim(adjustl(num_idx))//'.cls'
+
+                        call Params%WriteSingleCls(cls_text_file, truelike)
+                    endif
+                    !! ZH_change_off !!
                 else
                     if (Feedback >1 ) write (*,*) 'Zero weight: new like = ', truelike
                 end if
