@@ -923,22 +923,55 @@
     Class(ParamSet) :: Params
     character(*), intent(in)    :: aname
     real(mcp), intent(in)       :: like
-    integer :: file_unit, i
+
+    Type(mc_real_pointer) :: derived
+    integer numderived
+    
+    character(25)   :: txt
+    character(LEN=80) fmt
+    integer :: i, il
+    real(mcp) :: nm
 
     Type(DataLikelihood), pointer :: DataLike
     
-    call CreateTxtFile(aname, file_unit)
-    write(file_unit,*) "# logL" 
+    call CreateTxtFile(aname, tmp_file_unit)
+    txt = "# -logL"
+    write(tmp_file_unit,'(A25)') adjustl(txt)
+
+    txt = "total(-logL) = "
+    write(tmp_file_unit,'(A25,E18.9)') adjustl(txt), like
     do i=1, DataLikelihoods%Count
         DataLike => DataLikelihoods%Item(i)
-        write(file_unit,'(A20,E18.9)') adjustl(DataLike%name), Params%Likelihoods(i)
+        txt = "-logL("//trim(adjustl(DataLike%name))//") = "
+        write(tmp_file_unit,'(A25,E18.9)') adjustl(txt), Params%Likelihoods(i)
     enddo
+    write(tmp_file_unit,*) ''
+    
+    txt = "# parameters baseline"
+    write(tmp_file_unit,'(A25)') adjustl(txt)
+    do i=1, num_params_used
+        write(tmp_file_unit,'(A25,E16.7)') adjustl(NameMapping%name(params_used(i))), Params%P(params_used(i))
+    enddo
+    write(tmp_file_unit,*) ''
+    
+    txt = "# parameters derived"
+    write(tmp_file_unit,'(A25)') adjustl(txt)
+    numderived = Parameterization%CalcDerivedParams(Params%P,Params%Theory, derived)
+    do i=1, numderived
+        write(tmp_file_unit,'(A25,E16.7)') adjustl(ParamNames_name(NameMapping,num_params+i)), derived%P(i)
+    enddo
+    deallocate(derived%P)
+    write(tmp_file_unit,*) ''
+    
+    txt = "# Cls"
+    write(tmp_file_unit,'(A25)') adjustl(txt)
+    fmt = concat('(1I6,',num_cls,'E18.9)')
+    do il=2, lmax_computed_cl
+        nm = 2*pi/(il*(il+1))
+        write (tmp_file_unit,fmt) il, Params%Theory%cl(il,1:num_cls)/nm
+    enddo
+    call CloseFile(tmp_file_unit)
 
-    write(file_unit,*) "# parameters"
-
-    call Params%Theory%WriteAsciiCls(aname, file_unit)
-
-    call CloseFile(file_unit)
     end subroutine WriteSingleCls
     !! ZH_change_off !!
 

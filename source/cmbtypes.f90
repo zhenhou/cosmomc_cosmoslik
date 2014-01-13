@@ -21,10 +21,6 @@
     integer, parameter :: lmax = 6500, lmax_camb=5600, lmax_tensor = 400 !note only lmax_computed_cl is actually calculated
     !! pico_off !!
 
-    !! ZH_change_on !!
-    integer, parameter :: lmax_write = 2500
-    !! ZH_change_off
-
     !redshifts for output of BAO_dv background parameters
     real(mcp), target :: z_outputs(1) = [0.57_mcp]
 
@@ -106,9 +102,6 @@
 
     contains
     procedure :: WriteTheory
-    !! ZH_change_on !!
-    procedure :: WriteAsciiCls
-    !! ZH_change_off !!
     procedure :: ReadTheory
     procedure :: WriteBestFitData
     end Type TheoryPredictions
@@ -311,31 +304,6 @@
 
     end subroutine WriteTheory
 
-    !! ZH_change_on !!
-    subroutine WriteAsciiCls(T, aname, i)
-
-    character(*), intent(in) :: aname
-    Class(TheoryPredictions) T 
-    integer, intent(in) :: i
-
-    real(mcp) Cls(lmax,num_cls_tot), nm
-    integer :: il
-    character(LEN=80) fmt
-
-    call ClsFromTheoryData(T, Cls)
-    fmt = concat('(1I6,',num_cls_tot,'E18.9)')
-
-    do il=2, lmax_write
-        nm = 2*pi/(il*(il+1))
-        if (num_cls_ext > 0) then
-            write (i,fmt) il, cls(il,1:num_cls)/nm, cls(il,num_cls+1:num_cls_tot)
-        else
-            write (i,fmt) il, cls(il,:)/nm
-        end if
-    enddo
-
-    end subroutine WriteAsciiCls
-    !! ZH_change_off !!
 
     subroutine ReadTheory(T, i)
     Class(TheoryPredictions) T

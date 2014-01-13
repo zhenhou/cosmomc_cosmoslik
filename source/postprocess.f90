@@ -308,7 +308,7 @@
                         write(num_idx,'(I10)') num
                         cls_text_file = trim(adjustl(PostParams%redo_cls_outroot))//'_'//trim(adjustl(num_idx))//'.cls'
 
-                        call Params%WriteSingleCls(cls_text_file, truelike)
+                        call Params%WriteSingleCls(trim(cls_text_file), truelike)
                     endif
                     !! ZH_change_off !!
                 else
