@@ -1,7 +1,9 @@
 PICOFORCE = 
 #-D_PICO_FORCE_
-PICOFLAG=-D_PICO_ $(PICOFORCE)
-#PICOFLAG =
+
+# uncomment the following line to use pico
+#PICOFLAG=-D_PICO_ $(PICOFORCE)
+PICOFLAG =
 
 default: cosmomc		
 all : cosmomc getdist
@@ -12,6 +14,7 @@ PICOCAMB = pico_camb.o
 CLSFILE = CMB_Cls_pico.o
 PICO_INC=$(shell python -c "import pypico; print pypico.get_include()")
 PICO_LIB=$(shell python -c "import pypico; print pypico.get_link()")
+
 #PICO_INC=-I/usr/include/python2.7 -I/usr/include/python2.7 -I/usr/lib/python2.7/dist-packages/numpy/core/include -I/home/hou/.local/lib/python2.7/site-packages/pypico
 #PICO_LIB=-L/home/hou/.local/lib/python2.7/site-packages/pypico -lpico  -L/usr/lib -lpthread -ldl -lutil -lm -lpython2.7
 ifneq ($(strip $(PICOFORCE)),)
