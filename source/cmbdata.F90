@@ -1067,7 +1067,7 @@ contains
      !! ZH_change_on !!
        if (like%dataset%temp_alloc) then
            TT_tsz = DataParams(1)
-           TT_ksz = DateParams(2)
+           TT_ksz = DataParams(2)
            TT_ps  = DataParams(3)
            TT_cib = DataParams(4)
            TE_ps  = DataParams(5)
