@@ -367,7 +367,7 @@ contains
 
    !! ZH_change_on !!
    aset%temp_alloc = .false.
-   aset%fg_types = (/ 'TT_tsz','TT_ksz','TT_ps','TT_cib','TE_ps','EE_ps'/)
+   aset%fg_types = (/ 'tsz','ksz','ps_TT','cib','ps_TE','ps_EE'/)
    !! ZH_change_off !!
 
 !Special cases
