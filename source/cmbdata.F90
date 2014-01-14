@@ -1232,7 +1232,7 @@ contains
                   if (Ini_HasKey_File(Ini,KeyName)) SZTemplate = Ini_Read_String_File(Ini, keyname, .false.)
                   if (SZTemplate/='') then
                       call ReadFGTemplate(like%dataset, SZTemplate, ifg)
-                      call like%loadParamNames(trim(DataDir)//'Planck_fg.paramnames')
+                      call like%loadParamNames(trim(DataDir)//'planck_fg_singlefreq.paramnames')
                   endif
               enddo
           endif
