@@ -1070,16 +1070,17 @@ contains
            TT_ksz = DateParams(2)
            TT_ps  = DataParams(3)
            TT_cib = DataParams(4)
-           EE_ps  = DataParams(5)
-           EE_cib = DataParams(6)
+           TE_ps  = DataParams(5)
+           EE_ps  = DataParams(6)
            TT_cib_n = DataParams(7)
            
            do il=2, lmax
-               szcl(il,1) = szcl(il,1) + TT_tsz*like%dataset%fg_template(il,1)
-               szcl(il,1) = szcl(il,1) + TT_ksz*like%dataset%fg_template(il,2)
-               szcl(il,1) = szcl(il,1) + TT_ps *like%dataset%fg_template(il,3)
+               szcl(il,1) = szcl(il,1) + TT_tsz*like%dataset%fg_templates(il,1)
+               szcl(il,1) = szcl(il,1) + TT_ksz*like%dataset%fg_templates(il,2)
+               szcl(il,1) = szcl(il,1) + TT_ps *like%dataset%fg_templates(il,3)
                szcl(il,1) = szcl(il,1) + TT_cib*(il/3000.0d0)**TT_cib_n
-               szcl()
+               szcl(il,2) = szcl(il,2) + TE_ps *like%dataset%fg_templates(il,5)
+               szcl(il,3) = szcl(il,3) + EE_ps *like%dataset%fg_templates(il,6)
            enddo
        endif
      !! ZH_change_off !!
