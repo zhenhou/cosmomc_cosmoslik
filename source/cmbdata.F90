@@ -1224,7 +1224,7 @@ contains
           end if
 
           !! ZH_change_on !!
-          if (trim(like%name) .ne. 'Slik' .and. Ini_Read_Logical_File(Ini, 'use_Planck_fg', .false.)) then
+          if (trim(like%name) .ne. 'Slik' .and. Ini_Read_Logical_File(Ini, 'use_planck_fg', .false.)) then
               do ifg=1, 6
                   keyname = trim(numcat('cmb_dataset',i))//'_'//trim(like%dataset%fg_types(ifg))
 
