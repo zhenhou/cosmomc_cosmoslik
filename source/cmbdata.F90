@@ -82,6 +82,13 @@ implicit none
     real(mcp), pointer, dimension(:,:) :: all_l_obs, all_l_noise
     real(mcp), pointer, dimension(:) :: all_l_fsky
     real(mcp), pointer, dimension(:) :: sz_template
+
+    !! ZH_change_on !!
+    logical  :: temp_alloc
+    real(mcp), pointer, dimension(:,:) :: fg_templates
+    character(10), dimension(6) :: fg_types
+    !! ZH_change_off !!
+
     Type (TCMBLikes), pointer :: CMBLikes
   end Type CMBdataset
 
@@ -358,6 +365,11 @@ contains
    aset%CMBlike = .false.
    aset%dataset_filename=aname
 
+   !! ZH_change_on !!
+   aset%temp_alloc = .false.
+   aset%fg_types = (/ 'TT_tsz','TT_ksz','TT_ps','TT_cib','TE_ps','EE_ps'/)
+   !! ZH_change_off !!
+
 !Special cases
    if (aname == 'MAP' .or. aname == 'WMAP') then
      like%name = 'WMAP'
@@ -551,6 +563,33 @@ contains
 
 2    Close(tmp_file_unit)
  end subroutine ReadSZTemplate
+ 
+ !! ZH_change_on !!
+ subroutine ReadFGTemplate(aset, aname, fg_index)
+    Type (CMBdataset) :: aset
+    character(LEN=*), intent(IN) :: aname
+    integer :: fg_index
+
+    integer il
+    real(mcp) fg
+    
+    if (.not. aset%temp_alloc) then
+        allocate(aset%fg_templates(2:lmax,6)) !! TT_tsz, TT_ksz, TT_ps, TT_cib, TE_ps, EE_ps
+        aset%fg_templates(:,:) = 0.0d0
+        aset%temp_alloc = .true.
+    endif
+
+    call OpenTxtFile(aname, tmp_file_unit)
+
+    do while (.not. eof(tmp_file_unit))
+        read(tmp_file_unit, *) il, fg
+        if (il >= 2 .and. il <= lmax) aset%fg_templates(il,fg_index) = fg/(il*(il+1)/twopi)
+    enddo
+
+    close(tmp_file_unit)
+
+ end subroutine ReadFGTemplate
+ !! ZH_change_off !!
 
  function GetWinBandPower(AP, cl)
    real(mcp)  GetWinBandPower
@@ -999,6 +1038,11 @@ contains
     real(mcp) CMBLnLike
     real(mcp) sznorm, szcl(lmax,num_cls_tot)
 
+    !! ZH_change_on !!
+    integer  :: il
+    real(mcp) TT_tsz, TT_ksz, TT_ps, TT_cib, TE_ps, EE_ps, TT_cib_n
+    !! ZH_change_off !!
+
     !! cosmoslik_on !!
     integer(ccint) :: j
     !! cosmoslik_off !!
@@ -1020,6 +1064,25 @@ contains
          CMBLnLike = SlikLnLike(slik_id, cl)
      !! cosmoslik_off !!
      else
+     !! ZH_change_on !!
+       if (like%dataset%temp_alloc) then
+           TT_tsz = DataParams(1)
+           TT_ksz = DateParams(2)
+           TT_ps  = DataParams(3)
+           TT_cib = DataParams(4)
+           EE_ps  = DataParams(5)
+           EE_cib = DataParams(6)
+           TT_cib_n = DataParams(7)
+           
+           do il=2, lmax
+               szcl(il,1) = szcl(il,1) + TT_tsz*like%dataset%fg_template(il,1)
+               szcl(il,1) = szcl(il,1) + TT_ksz*like%dataset%fg_template(il,2)
+               szcl(il,1) = szcl(il,1) + TT_ps *like%dataset%fg_template(il,3)
+               szcl(il,1) = szcl(il,1) + TT_cib*(il/3000.0d0)**TT_cib_n
+               szcl()
+           enddo
+       endif
+     !! ZH_change_off !!
        CMBLnLike = CalcLnLike(szcl,like%dataset)
      end if
 
@@ -1122,6 +1185,10 @@ contains
     character(LEN=Ini_max_string_len) filename,keyname,SZTemplate
     real(mcp) SZScale
 
+    !! ZH_change_on !!
+    integer :: ifg
+    !! ZH_change_off !!
+
         Use_CMB = Use_CMB .or. Ini_Read_Logical_File(Ini, 'use_CMB',.true.)
 
 #ifndef NOWMAP
@@ -1154,6 +1221,21 @@ contains
            call ReadSZTemplate(like%dataset, SZTemplate,SZScale)
            call like%loadParamNames(trim(DataDir)//'WMAP.paramnames')
           end if
+
+          !! ZH_change_on !!
+          if (trim(like%name) .ne. 'Slik' .and. Ini_Read_Logical_File(Ini, 'use_Planck_fg', .false.)) then
+              do ifg=1, 6
+                  keyname = trim(numcat('cmb_dataset',i))//'_'//trim(like%dataset%fg_types(ifg))
+
+                  !! SZTemplate in following lines is just varaible that contains the template file name
+                  if (Ini_HasKey_File(Ini,KeyName)) SZTemplate = Ini_Read_String_File(Ini, keyname, .false.)
+                  if (SZTemplate/='') then
+                      call ReadFGTemplate(like%dataset, SZTemplate, ifg)
+                      call like%loadParamNames(trim(DataDir)//'Planck_fg.paramnames')
+                  endif
+              enddo
+          endif
+          !! ZH_change_off !!
 
          end do
          if (Feedback > 1) write (*,*) 'read CMB datasets'
