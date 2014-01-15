@@ -1,7 +1,7 @@
 atsz        A^{tSZ}         ## tSZ amplitude for TT
 aksz        A^{kSZ}         ## kSZ amplitude for TT
-aps_TT      A^{PS}_{TT}     ## Poisson amplitude for TT
+apsTT       A^{PS}_{TT}     ## Poisson amplitude for TT
 acib        A^{CIB}         ## CIB amplitude for TT
-aps_TE      A^{PS}_{TE}     ## Poisson amplitude for TE
-aps_EE      A^{PS}_{EE}     ## Poisson amplitude for EE
-n_CIB       n_{CIB}         ## spectrual index of CIB
+apsTE       A^{PS}_{TE}     ## Poisson amplitude for TE
+apsEE       A^{PS}_{EE}     ## Poisson amplitude for EE
+nCIB        n_{CIB}         ## spectrual index of CIB
