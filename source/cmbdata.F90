@@ -1078,7 +1078,11 @@ contains
                szcl(il,1) = szcl(il,1) + TT_tsz*like%dataset%fg_templates(il,1)
                szcl(il,1) = szcl(il,1) + TT_ksz*like%dataset%fg_templates(il,2)
                szcl(il,1) = szcl(il,1) + TT_ps *like%dataset%fg_templates(il,3)
-               szcl(il,1) = szcl(il,1) + TT_cib*twopi*(il/3000.0d0)**TT_cib_n/dble(il*(il+1))
+               if (like%dataset%fg_templates(il,4) .ge. 1.0d-8) then
+                   szcl(il,1) = szcl(il,1) + TT_cib*like%dataset%fg_templates(il,4)
+               else
+                   szcl(il,1) = szcl(il,1) + TT_cib*twopi*(il/3000.0d0)**TT_cib_n/dble(il*(il+1))
+               endif
                szcl(il,2) = szcl(il,2) + TE_ps *like%dataset%fg_templates(il,5)
                szcl(il,3) = szcl(il,3) + EE_ps *like%dataset%fg_templates(il,6)
            enddo
