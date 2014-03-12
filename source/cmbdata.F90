@@ -87,7 +87,7 @@ implicit none
     logical  :: temp_alloc
     logical  :: use_galactic_residual
     real(mcp), pointer, dimension(:,:) :: fg_templates
-    character(10), dimension(6) :: fg_types
+    character(10), dimension(9) :: fg_types
     !! ZH_change_off !!
 
     Type (TCMBLikes), pointer :: CMBLikes
@@ -369,7 +369,7 @@ contains
    !! ZH_change_on !!
    aset%temp_alloc = .false.
    aset%use_galactic_residual = .false.
-   aset%fg_types = (/ 'tsz','ksz','ps_TT','cib','ps_TE','ps_EE'/)
+   aset%fg_types = (/ 'tsz','ksz','ps_TT','cib','ps_TE','ps_EE','gal_TT','gal_TE','gal_EE'/)
    !! ZH_change_off !!
 
 !Special cases
@@ -576,7 +576,7 @@ contains
     real(mcp) fg
     
     if (.not. aset%temp_alloc) then
-        allocate(aset%fg_templates(2:lmax,6)) !! TT_tsz, TT_ksz, TT_ps, TT_cib, TE_ps, EE_ps
+        allocate(aset%fg_templates(2:lmax,9)) !! TT_tsz, TT_ksz, TT_ps, TT_cib, TE_ps, EE_ps, TT_gal, TE_gal, EE_gal
         aset%fg_templates(:,:) = 0.0d0
         aset%temp_alloc = .true.
     endif
@@ -1043,6 +1043,7 @@ contains
     !! ZH_change_on !!
     integer  :: il
     real(mcp) TT_tsz, TT_ksz, TT_ps, TT_cib, TE_ps, EE_ps, TT_cib_n
+    real(mcp) TT_gal, TE_gal, EE_gal
     !! ZH_change_off !!
 
     !! cosmoslik_on !!
@@ -1075,6 +1076,10 @@ contains
            TE_ps  = DataParams(5)
            EE_ps  = DataParams(6)
            TT_cib_n = DataParams(7)
+     
+           TT_gal = DataParams(8)
+           TE_gal = DataParams(9)
+           EE_gal = DataParams(10)
            
            do il=2, lmax
                szcl(il,1) = szcl(il,1) + TT_tsz*like%dataset%fg_templates(il,1)
@@ -1085,8 +1090,13 @@ contains
                else
                    szcl(il,1) = szcl(il,1) + TT_cib*twopi*(il/3000.0d0)**TT_cib_n/dble(il*(il+1))
                endif
+
                szcl(il,2) = szcl(il,2) + TE_ps *like%dataset%fg_templates(il,5)
                szcl(il,3) = szcl(il,3) + EE_ps *like%dataset%fg_templates(il,6)
+
+               szcl(il,1) = szcl(il,1) + TT_gal*like%dataset%fg_templates(il,7)
+               szcl(il,2) = szcl(il,2) + TE_gal*like%dataset%fg_templates(il,8)
+               szcl(il,3) = szcl(il,3) + EE_gal*like%dataset%fg_templates(il,9)
            enddo
        endif
      !! ZH_change_off !!

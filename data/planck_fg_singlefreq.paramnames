@@ -5,3 +5,6 @@ acib        A^{CIB}         ## CIB amplitude for TT
 apsTE       A^{PS}_{TE}     ## Poisson amplitude for TE
 apsEE       A^{PS}_{EE}     ## Poisson amplitude for EE
 nCIB        n_{CIB}         ## spectrual index of CIB
+agalTT      A^{Gal}_{TT}    ## amplitude of Galactic residual for TT
+agalTE      A^{Gal}_{TE}    ## amplitude of Galactic residual for TE
+agalEE      A^{Gal}_{EE}    ## amplitude of Galactic residual for EE
