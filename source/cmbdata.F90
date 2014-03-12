@@ -85,6 +85,7 @@ implicit none
 
     !! ZH_change_on !!
     logical  :: temp_alloc
+    logical  :: use_galactic_residual
     real(mcp), pointer, dimension(:,:) :: fg_templates
     character(10), dimension(6) :: fg_types
     !! ZH_change_off !!
@@ -367,6 +368,7 @@ contains
 
    !! ZH_change_on !!
    aset%temp_alloc = .false.
+   aset%use_galactic_residual = .false.
    aset%fg_types = (/ 'tsz','ksz','ps_TT','cib','ps_TE','ps_EE'/)
    !! ZH_change_off !!
 
