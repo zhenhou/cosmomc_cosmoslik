@@ -68,9 +68,8 @@ gscripts = {}
 cdef public void init_script_(ccint *slik_id, char *name, ccint *set_cls_externally, ccnchar nname):
     try:
         global gscripts
-        script = K.load_script(str(add_null_term(name,nname)).strip())
+        script = K.load_script(str(add_null_term(name,nname)).strip(),_cls_set_externally=(set_cls_externally[0]==1))
         script._params = dict()
-        script.params._cls_set_externally = (set_cls_externally[0]==1)
         gscripts[id(script)] = script
         slik_id[0] = id(script)
     except Exception as e:
