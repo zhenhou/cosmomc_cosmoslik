@@ -225,6 +225,43 @@
         if (do_bispectrum .and. global_error_flag==0) call GetBispectrum(CTransScal)
     end if
 
+    !! ZH_change_on !!
+    if (FeedbackLevel .eq. 3) then
+        open(unit=1003, file='CAMBParams_output.txt', status='unknown')
+        write(1003,*) 'PK_WantTransfer      = ', CP%PK_WantTransfer
+        write(1003,*) 'NonLinear            = ', CP%NonLinear
+        write(1003,*) 'Max_l                = ', CP%Max_l
+        write(1003,*) 'Max_eta_k            = ', CP%Max_eta_k
+        write(1003,*) 'omegab               = ', CP%omegab
+        write(1003,*) 'omegac               = ', CP%omegac
+        write(1003,*) 'omegav               = ', CP%omegav
+        write(1003,*) 'omegan               = ', CP%omegan
+        write(1003,*) 'H0                   = ', CP%H0
+        write(1003,*) 'TCMB                 = ', CP%TCMB
+        write(1003,*) 'yhe                  = ', CP%yhe
+        write(1003,*) 'Num_Nu_massless      = ', CP%Num_Nu_massless
+        write(1003,*) 'Num_Nu_massive       = ', CP%Num_Nu_massive
+        write(1003,*) 'Nu_mass_eigenstates  = ', CP%Nu_mass_eigenstates
+        write(1003,*) 'share_delta_neff     = ', CP%share_delta_neff
+        write(1003,*) 'Nu_mass_degeneracies = ', CP%Nu_mass_degeneracies(1:max_nu)
+        write(1003,*) 'Nu_mass_fractions    = ', CP%Nu_mass_fractions(1:max_nu)
+        write(1003,*) 'Nu_mass_numbers      = ', CP%Nu_mass_numbers(1:max_nu)
+        write(1003,*) 'Scalar_initial_condition = ', CP%Scalar_initial_condition
+        write(1003,*) 'OutputNormalization  = ', CP%OutputNormalization
+        write(1003,*) 'AccuratePolarization = ', CP%AccuratePolarization
+        write(1003,*) 'AccurateBB           = ', CP%AccurateBB
+        write(1003,*) 'AccurateReionization = ', CP%AccurateReionization
+        write(1003,*) 'MassiveNuMethod      = ', CP%MassiveNuMethod
+        write(1003,*) 'InitPower%nn         = ', CP%InitPower%nn
+        write(1003,*) 'InitPower%an(1)      = ', CP%InitPower%an(1)
+        write(1003,*) 'InitPower%n_run(1)   = ', CP%InitPower%n_run(1)
+        write(1003,*) 'InitPower%rat(1)     = ', CP%InitPower%rat(1)
+        write(1003,*) 'InitPower%k_0_scalar = ', CP%InitPower%k_0_scalar
+        write(1003,*) 'InitPower%ScalarPowerAmp(1) = ', CP%InitPower%ScalarPowerAmp(1)
+        close(1003) 
+    endif
+    !! ZH_change_off !!
+
     end subroutine CAMB_GetResults
 
 

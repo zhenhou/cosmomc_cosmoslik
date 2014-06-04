@@ -3,7 +3,7 @@ PICOFORCE =
 
 # uncomment the following line to use pico
 #PICOFLAG=-D_PICO_ $(PICOFORCE)
-PICOFLAG =
+PICOFLAG = 
 
 default: cosmomc		
 all : cosmomc getdist
@@ -60,7 +60,7 @@ cfitsio ?=
 
 #empty not to compile with CLIK, set from ~/.bashrc
 #PLANCKLIKE = cliklike
-PLANCKLIKE = 
+PLANCKLIKE = cliklike
 
 #These is not used in public cosmomc
 highL ?=
