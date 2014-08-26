@@ -1061,6 +1061,7 @@ contains
        CMBLnLike = MAPLnLike(szcl)
      !! cosmoslik_on !!
      elseif(like%name == 'Slik') then
+         print*, 'using slik ---------------'
          do j=1, slik_params%num_params
              call set_param(slik_id,j,DataParams(j))
          enddo 
@@ -1068,6 +1069,9 @@ contains
      !! cosmoslik_off !!
      else
      !! ZH_change_on !!
+       print*, '----------------------------'
+       print*, 'caution!!'
+       print*, '----------------------'
        if (like%dataset%temp_alloc) then
            TT_tsz = DataParams(1)
            TT_ksz = DataParams(2)

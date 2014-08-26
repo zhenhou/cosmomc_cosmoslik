@@ -39,7 +39,7 @@ else
 F90C     = mpif90
 endif
 
-FFLAGS = -mkl -openmp -O4 -xHost -no-prec-div -fpp -DMPI -g -openmp -CB -traceback $(PICOFLAG) $(PICO_INC) -assume byterecl
+FFLAGS = -mkl -openmp -O4 -xHost -no-prec-div -fpp -DMPI -g -openmp $(PICOFLAG) $(PICO_INC) -assume byterecl
 LAPACKL = -lmpi
 
 CC = icc
